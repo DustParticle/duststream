@@ -1,0 +1,15 @@
+{
+  "env": {
+    "name": "prod"
+  },
+  "adal": {
+    "tenant": "#{aadTenant}#",
+    "clientId": "#{aadClientId}#",
+    "endpoints": {
+      "api": "#{aadApi}#"
+    },
+    "navigateToLoginRequestUrl": false,
+    "cacheLocation": "localStorage",
+    "redirectUri": "#{aadRedirectUri}#"
+  }
+}
