@@ -1,3 +1,6 @@
+using DustStream.Interfaces;
+using DustStream.Options;
+using DustStream.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,6 +23,9 @@ namespace DustStream
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<AzureAdOptions>(Configuration.GetSection("AzureAd"));
+            services.Configure<TableStorageOptions>(Configuration.GetSection("TableStorage"));
+
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -31,6 +37,11 @@ namespace DustStream
             {
                 sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddAzureAdBearer(options => Configuration.Bind("AzureAd", options));
+
+            services.AddSingleton<IProjectDataService, ProjectDataService>();
+            services.AddSingleton<IRevisionDataService, RevisionDataService>();
+            services.AddSingleton<IProcedureDataService, ProcedureDataService>();
+            services.AddSingleton<IProcedureExecutionDataService, ProcedureExecutionDataService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,6 +66,8 @@ namespace DustStream
             }
 
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

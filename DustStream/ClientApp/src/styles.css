@@ -14,3 +14,13 @@ code {
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
+
+.icon-collapsed {
+  font-size: 20px;
+  color: green;
+}
+
+.icon-expanded {
+  font-size: 20px;
+  color: red;
+}

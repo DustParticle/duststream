@@ -1,0 +1,77 @@
+.statusFailed {
+    background-color: red;
+    border: hidden;
+}
+
+.statusInProgress {
+    background-color: darkgrey;
+    border: hidden;
+}
+
+.statusInQueue {
+    background-color: white;
+    border: hidden;
+}
+
+.statusSuccess {
+    background-color: lawngreen;
+    border: hidden;
+}
+
+.statusNoStatus {
+    background-color: transparent;
+    border: hidden;
+}
+
+.oddRowStyle {
+    background-color: lightcyan;
+}
+
+.evenRowStyle {
+    background-color: honeydew;
+}
+
+.table-expandable td, .table-expandable th {
+    text-align: left;
+    vertical-align: text-top;
+    border: none;
+    background-color: white;
+}
+
+.table-striped-rows td, .table-striped-rows th {
+    border-top-color: black;
+    border-bottom-color: black;
+    white-space: nowrap;
+}
+
+.icon-expanded-false {
+    font-size: 20px;
+    color: green;
+}
+
+.icon-expanded-true {
+    font-size: 20px;
+    color: red;
+}
+
+.procedure-header {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: solid;
+    border-width: thin;
+    border-color: lightgray;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    background-color: white;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 8px;
+}

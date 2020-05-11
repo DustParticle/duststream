@@ -15,7 +15,8 @@ import { NgbdSortableHeader } from './shared/table-layout.component';
 import { InsertAuthTokenInterceptor } from './shared/insert-auth-token-interceptor';
 
 import { AppConfig } from './app.config';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { appRoutes } from './app.routes';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 export function initializeApp(appConfig: AppConfig) {
   return () => appConfig.load();
@@ -31,18 +32,16 @@ export function msAdalAngular6ConfigFactory() {
   declarations: [
     AppComponent,
     NavMenuComponent,
-    DashboardComponent,
     NgbdSortableHeader
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
-    RouterModule.forRoot([
-      { path: '', component: DashboardComponent, pathMatch: 'full', canActivate: [AuthenticationGuard] },
-    ]),
+    RouterModule.forRoot(appRoutes),
     MsAdalAngular6Module,
     NgbModule,
+    DashboardModule,
     SharedModule
   ],
   providers: [

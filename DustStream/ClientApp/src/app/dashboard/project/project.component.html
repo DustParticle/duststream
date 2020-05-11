@@ -1,0 +1,63 @@
+<div *ngIf="project">
+  <h2>{{project.name}}</h2>
+  {{project.description}}
+</div>
+<br />
+<table *ngIf="revisions && procedures" class="table-striped-rows table-hover">
+  <tr style="background-color: white">
+    <th width="40"></th>
+    <th width="170">Time</th>
+    <th width="130">Build Number</th>
+    <th colspan="1000"></th>
+  </tr>
+  <ng-container *ngFor="let revision of revisions; let i = index; let odd = odd; let even = even;">
+    <tr (click)="selectRow(revision)" [ngClass]="{'oddRowStyle': odd, 'evenRowStyle': even}">
+      <td>
+        <i class="fa" [ngClass]="{'icon-collapsed fa-plus-circle': isExpanded(revision) === false,
+                                          'icon-expanded fa-minus-circle': isExpanded(revision) === true}">
+        </i>
+      </td>
+      <td>{{revision.createdTime | date:"MM/dd/yyyy HH:mm:ss"}}</td>
+      <td>
+        <a [routerLink]="[revision.revisionNumber]"
+           routerLinkActive="active">{{revision.revisionNumber}}</a>
+      </td>
+      <td style="padding: 4px" *ngFor="let procedure of procedures">
+        <table style="width: 100%; height: 100%; background-color: transparent">
+          <tr>
+            <td *ngIf="executionStatus[revision.revisionNumber] && executionStatus[revision.revisionNumber][procedure.shortName]"
+                class="{{ executionStatus[revision.revisionNumber][procedure.shortName] | status }}">
+              {{procedure.shortName}}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr *ngIf="isExpanded(revision)" style="border-top: hidden; background-color: initial">
+      <td colspan="1000">
+        <table class="table-expandable">
+          <tr>
+            <td>Build Number:</td>
+            <td>{{revision.revisionNumber}}</td>
+          </tr>
+          <tr *ngIf="revisionCommitSets[revision.revisionNumber]">
+            <td>Commit Set:</td>
+            <td [innerHTML]="revisionCommitSets[revision.revisionNumber]"></td>
+          </tr>
+          <tr *ngIf="revisionCommitPayload[revision.revisionNumber]">
+            <td>Repository:</td>
+            <td>{{revisionCommitPayload[revision.revisionNumber].repositoryName}}</td>
+          </tr>
+          <tr *ngIf="revisionCommitPayload[revision.revisionNumber]">
+            <td>Author:</td>
+            <td>{{revisionCommitPayload[revision.revisionNumber].author}}</td>
+          </tr>
+          <tr *ngIf="revisionCommitPayload[revision.revisionNumber]">
+            <td>Message:</td>
+            <td>{{revisionCommitPayload[revision.revisionNumber].message}}</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </ng-container>
+</table>

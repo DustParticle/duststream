@@ -354,3 +354,5 @@ MigrationBackup/
 **/ClientApp/src/app/**/*.map
 
 package-lock.json
+DustStream/ClientApp/src/environments/environment.js.map
+DustStream/ClientApp/src/environments/environment.js
