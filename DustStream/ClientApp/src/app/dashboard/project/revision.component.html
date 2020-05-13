@@ -1,0 +1,22 @@
+<div *ngIf="revisionInfo">
+  <h2>{{revisionInfo.projectName}}</h2><br />
+
+  <h3 class="session-header" style="width: 70%">
+    Build Number {{revisionInfo.revisionNumber}} - {{revisionInfo.createdTime | date:"MM/dd/yyyy HH:mm:ss"}}
+  </h3>
+  <div *ngIf="revisionCommitPayload" class="session-detail">
+    <b>Repository: </b>{{revisionCommitPayload.repositoryName}}<br />
+    <b>Branch: </b>{{revisionCommitPayload.branch}}<br />
+    <b>Author: </b>{{revisionCommitPayload.author}}<br />
+    {{revisionCommitPayload.message}}<br />
+  </div>
+</div>
+<br />
+
+<div *ngIf="procedures">
+  <procedure-execution *ngFor="let procedure of procedures"
+                         [projectName]="revisionInfo.projectName"
+                         [revisionNumber]="revisionInfo.revisionNumber"
+                         [procedureShortName]="procedure.shortName">
+  </procedure-execution>
+</div>

@@ -1,0 +1,14 @@
+{
+  "env": {
+    "name": "dev"
+  },
+  "adal": {
+    "tenant": "",
+    "clientId": "",
+    "endpoints": {
+      "api": ""
+    },
+    "navigateToLoginRequestUrl": false,
+    "cacheLocation": "localStorage"
+  }
+}
