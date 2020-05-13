@@ -1,0 +1,18 @@
+<mat-nav-list class="sidebar">
+  <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard/projects/create">
+    <mat-icon>import_contacts</mat-icon> New Project
+  </a>
+  <mat-divider class="divider-spacing"></mat-divider>
+
+  <mat-expansion-panel [expanded]="true" class="mat-elevation-z0">
+    <mat-expansion-panel-header>
+      <mat-panel-title>Projects</mat-panel-title>
+    </mat-expansion-panel-header>
+    <ng-template ngFor let-item [ngForOf]="sidebarService.getItems()">
+      <a mat-list-item routerLinkActive="list-item-active" routerLink="{{ item.routerLink }}">
+        <mat-icon>track_changes</mat-icon> {{ item.name }}
+      </a>
+    </ng-template>
+  </mat-expansion-panel>
+  <mat-divider></mat-divider>
+</mat-nav-list>

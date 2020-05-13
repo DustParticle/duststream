@@ -1,0 +1,20 @@
+:host {
+  .mat-icon {
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+}
+
+.sidebar .mat-expansion-panel-body {
+  padding: 0 !important;
+}
+
+.divider-spacing {
+  margin-bottom: 30px;
+}
+
+.list-item-active {
+  font-weight: bold;
+  color: mat-color(darker) !important;
+  background: rgba(0, 0, 0, 0.04);
+}

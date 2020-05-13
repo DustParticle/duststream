@@ -21,61 +21,33 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Compile Remove="ClientApp\src\app\dashboard\**" />
     <Content Remove="$(SpaRoot)**" />
+    <Content Remove="ClientApp\src\app\dashboard\**" />
+    <EmbeddedResource Remove="ClientApp\src\app\dashboard\**" />
     <None Remove="$(SpaRoot)**" />
+    <None Remove="ClientApp\src\app\dashboard\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="ClientApp\src\app\app.config.ts" />
-    <None Remove="ClientApp\src\app\dashboard\models\index.ts" />
-    <None Remove="ClientApp\src\app\dashboard\models\procedure-execution.model.ts" />
-    <None Remove="ClientApp\src\app\dashboard\models\procedure.model.ts" />
-    <None Remove="ClientApp\src\app\dashboard\models\project.model.ts" />
-    <None Remove="ClientApp\src\app\dashboard\models\revision.model.ts" />
     <None Remove="ClientApp\src\app\shared\app-config.model.ts" />
     <None Remove="ClientApp\src\app\shared\insert-auth-token-interceptor.ts" />
+    <None Remove="ClientApp\src\app\shared\services\sidebar.service.ts" />
     <None Remove="ClientApp\src\assets\config\config.dev.json" />
     <None Remove="ClientApp\src\assets\config\config.prod.json" />
   </ItemGroup>
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\app.config.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\dashboard\models\index.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\dashboard\models\procedure-execution.model.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\dashboard\models\procedure.model.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\dashboard\models\revision.model.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\dashboard\models\project.model.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\dashboard\project\status.pipe.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\app-config.model.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\insert-auth-token-interceptor.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\shared\services\sidebar.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\assets\config\config.prod.json">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\assets\config\config.dev.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="ClientApp\src\app\dashboard\models\index.js">
-      <DependentUpon>index.ts</DependentUpon>
-    </None>
-    <None Update="ClientApp\src\app\dashboard\models\procedure-execution.model.js">
-      <DependentUpon>procedure-execution.model.ts</DependentUpon>
-    </None>
-    <None Update="ClientApp\src\app\dashboard\models\procedure.model.js">
-      <DependentUpon>procedure.model.ts</DependentUpon>
-    </None>
-    <None Update="ClientApp\src\app\dashboard\models\revision.model.js">
-      <DependentUpon>revision.model.ts</DependentUpon>
-    </None>
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
