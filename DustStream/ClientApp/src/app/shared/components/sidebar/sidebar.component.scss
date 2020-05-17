@@ -1,12 +1,12 @@
-:host {
+.sidebar {
   .mat-icon {
     vertical-align: middle;
     margin-right: 10px;
   }
-}
 
-.sidebar .mat-expansion-panel-body {
-  padding: 0 !important;
+  .mat-expansion-panel-body {
+    padding: 0 !important;
+  }
 }
 
 .divider-spacing {

@@ -14,12 +14,15 @@ import { DefaultComponent } from './default.component';
     CommonModule,
     RouterModule,
     SharedModule,
-    MatSidenavModule,
-    MatDividerModule,
     FlexLayoutModule,
     MatCardModule,
+    MatDividerModule,
     MatPaginatorModule,
+    MatSidenavModule,
     MatTableModule
+  ],
+  exports: [
+    DefaultComponent
   ]
 })
 export class DefaultModule { }

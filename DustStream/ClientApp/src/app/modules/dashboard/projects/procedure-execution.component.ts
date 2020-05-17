@@ -5,7 +5,7 @@ import { IProcedureExecution } from '../models';
 @Component({
   selector: 'procedure-execution',
   templateUrl: './procedure-execution.component.html',
-  styleUrls: ['./procedure-execution.component.css']
+  styleUrls: ['./procedure-execution.component.scss']
 })
 export class ProcedureExecutionComponent implements OnInit {
   @Input() projectName: string;

@@ -2,13 +2,13 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
-import { ProjectModule } from './project/project.module';
+import { ProjectsModule } from './projects/projects.module';
 
 @NgModule({
   imports: [
     CommonModule,
     RouterModule,
-    ProjectModule
+    ProjectsModule
   ],
   declarations: [
     DashboardComponent

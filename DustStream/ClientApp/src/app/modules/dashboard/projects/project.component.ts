@@ -7,7 +7,7 @@ import { IProject } from '../models/project.model';
 @Component({
   selector: 'project',
   templateUrl: './project.component.html',
-  styleUrls: ['./project.component.css']
+  styleUrls: ['./project.component.scss']
 })
 export class ProjectComponent {
   public revisions: IRevision[];

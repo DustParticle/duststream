@@ -6,7 +6,7 @@ import { IProcedure, IRevision } from '../models';
 @Component({
   selector: 'revision',
   templateUrl: './revision.component.html',
-  styleUrls: ['./revision.component.css']
+  styleUrls: ['./revision.component.scss']
 })
 export class RevisionComponent {
   public revisionInfo: IRevision;
