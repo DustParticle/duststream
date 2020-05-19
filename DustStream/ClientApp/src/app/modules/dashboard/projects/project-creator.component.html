@@ -1,1 +1,37 @@
-<h2>Create project</h2>
+<h3>Create A New Project</h3>
+
+<br />
+<mat-divider></mat-divider>
+<br />
+
+<section fxLayout="row wrap" fxLayoutAlign="center center" class="project-creation">
+  <mat-card *ngIf="!isProjectCreated" fxFlex="500px" fxFlex.xs="100%">
+    <mat-card-title>Create a new project</mat-card-title>
+
+    <form [formGroup]="projectForm" class="project-form"
+          novalidate (ngSubmit)="createProject(projectForm.value)" fxLayout="column wrap" fxLayoutAlign="center center" fxLayoutGap="10px">
+      <mat-error *ngIf="createProjectError">{{ createProjectError }}</mat-error>
+
+      <mat-card-content>
+        <mat-form-field>
+          <input matInput type="text" placeholder="Project name" formControlName="name" id="name" required>
+          <mat-error *ngIf="hasError('name', 'required')">Name is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <textarea matInput placeholder="Project Description" rows="4" formControlName="description" id="description" required></textarea>
+          <mat-error *ngIf="hasError('description', 'required')">Description is required</mat-error>
+        </mat-form-field>
+      </mat-card-content>
+
+      <mat-card-actions align="center">
+        <button mat-raised-button color="primary" [disabled]="!projectForm.valid">Create</button>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+
+  <mat-card *ngIf="isProjectCreated" fxFlex="500px" fxFlex.xs="100%">
+    <mat-card-title>Project is created</mat-card-title>
+    <mat-icon>check_circle_outline</mat-icon>
+  </mat-card>
+</section>

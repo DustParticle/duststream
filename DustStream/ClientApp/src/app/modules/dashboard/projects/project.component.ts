@@ -1,8 +1,9 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IProcedure, IRevision } from '../models';
 import { IProject } from '../models/project.model';
+import { ProjectService } from './project.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'project',
@@ -20,7 +21,8 @@ export class ProjectComponent {
   public revisionCommitPayload: object[];
   public projectName: string;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+  constructor(private route: ActivatedRoute, private http: HttpClient, @Inject('BASE_URL') baseUrl: string,
+    private projectService: ProjectService) {
   }
 
   ngOnInit(): void {
@@ -28,7 +30,7 @@ export class ProjectComponent {
       this.projectName = params['projectName'];
 
       // Get title and component info
-      this.http.get('/api/projects/' + this.projectName).subscribe((project: IProject) => {
+      this.projectService.getProject(this.projectName).subscribe((project: IProject) => {
         this.project = project;
 
         // Get table content

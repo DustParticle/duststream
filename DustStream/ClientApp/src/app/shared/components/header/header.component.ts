@@ -10,7 +10,7 @@ export class HeaderComponent implements OnInit {
 
   @Output() toggleSideBar: EventEmitter<any> = new EventEmitter();
 
-  constructor(private authService: MsAdalAngular6Service) { }
+  constructor(public authService: MsAdalAngular6Service) { }
 
   ngOnInit() { }
 
