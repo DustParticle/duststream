@@ -1,0 +1,23 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Provide sufficient contrast against white background */
+/* You can add global styles to this file, and also import other style files */
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.icon-collapsed {
+  font-size: 20px;
+  color: green;
+}
+
+.icon-expanded {
+  font-size: 20px;
+  color: red;
+}

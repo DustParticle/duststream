@@ -1,22 +1,16 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap'
-
-import { MsAdalAngular6Module, MsAdalAngular6Service, AuthenticationGuard } from 'microsoft-adal-angular6'; 
-
-import { SharedModule } from './shared/shared.module'
-
+import { AuthenticationGuard, MsAdalAngular6Module, MsAdalAngular6Service } from 'microsoft-adal-angular6';
 import { AppComponent } from './app.component';
-import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { NgbdSortableHeader } from './shared/table-layout.component';
-import { InsertAuthTokenInterceptor } from './shared/insert-auth-token-interceptor';
-
 import { AppConfig } from './app.config';
 import { appRoutes } from './app.routes';
-import { DashboardModule } from './dashboard/dashboard.module';
+import { DefaultModule } from './layouts/default/default.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { SharedModule } from './shared/shared.module';
 
 export function initializeApp(appConfig: AppConfig) {
   return () => appConfig.load();
@@ -30,17 +24,16 @@ export function msAdalAngular6ConfigFactory() {
 
 @NgModule({
   declarations: [
-    AppComponent,
-    NavMenuComponent,
-    NgbdSortableHeader
+    AppComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
+    BrowserAnimationsModule,
     FormsModule,
     RouterModule.forRoot(appRoutes),
     MsAdalAngular6Module,
-    NgbModule,
+    DefaultModule,
     DashboardModule,
     SharedModule
   ],
@@ -58,12 +51,7 @@ export function msAdalAngular6ConfigFactory() {
       useFactory: msAdalAngular6ConfigFactory,
       deps: []
     },
-    AuthenticationGuard,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: InsertAuthTokenInterceptor,
-      multi: true
-    },
+    AuthenticationGuard
   ],
   bootstrap: [AppComponent]
 })

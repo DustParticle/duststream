@@ -1,0 +1,32 @@
+<router-outlet></router-outlet>
+
+<div *ngIf="isShowingProjects">
+  <h3>Welcome {{ authService.LoggedInUserName }}</h3>
+
+  <br />
+  <mat-divider></mat-divider>
+  <br />
+
+  <mat-tab-group dynamicHeight>
+    <mat-tab label="All Projects">
+      <div fxLayout.gt-sm="row wrap" fxLayout="column" class="project-list">
+        <ng-template ngFor let-item [ngForOf]="projects">
+          <mat-card fxFlex.gt-sm="0 0 calc(25% - 20px)" fxFlex>
+            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap="5px" fxLayoutAlign="space-between center">
+              <div fxFlex.gt-sm="40px" fxFlex>
+                <mat-icon mat-card-avatar>folder_open</mat-icon>
+              </div>
+              <div fxFlex.gt-sm="calc(100% - 45px)" fxFlex>
+                <mat-card-title>
+                  <a routerLink="{{ item.routerLink }}">{{ item.name }}</a>
+                </mat-card-title>
+                <mat-card-subtitle>{{ item.description }}</mat-card-subtitle>
+              </div>
+            </div>
+          </mat-card>
+        </ng-template>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+  <br />
+</div>

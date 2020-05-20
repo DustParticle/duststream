@@ -1,0 +1,33 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <button mat-icon-button (click)="toggleSB()">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <span> DUSTSTREAM </span>
+
+    <div fxFlex fxLayout="row" fxLayoutAlign="flex-end">
+      <ul fxLayout="row" fxLayoutGap="20px">
+        <li>
+          <button mat-button [matMenuTriggerFor]="menu">
+            <mat-icon>person_outline</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <mat-card>
+              <mat-card-header>
+                <!--<div mat-card-avatar class="example-header-image"></div>-->
+                <mat-card-title>{{ authService.LoggedInUserName }}</mat-card-title>
+                <mat-card-subtitle>{{ authService.LoggedInUserEmail }}</mat-card-subtitle>
+              </mat-card-header>
+            </mat-card>
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="logout()">
+              <mat-icon>exit_to_app</mat-icon>
+              Log out
+            </button>
+          </mat-menu>
+        </li>
+      </ul>
+    </div>
+  </mat-toolbar-row>
+</mat-toolbar>
