@@ -5,17 +5,13 @@ using DustStream.Options;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace DustStream.Controllers
 {
-    public class CreateProjectRequest
-    {
-        public string Name { get; set; }
-        public string Description { get; set; }
-    }
-
     [Route("api/[controller]")]
     public class ProjectsController : Controller
     {
@@ -44,7 +40,7 @@ namespace DustStream.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequest request)
+        public async Task<IActionResult> CreateProject([FromBody] Project request)
         {
             Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, request.Name);
             if (null != project)
@@ -56,10 +52,20 @@ namespace DustStream.Controllers
             {
                 DomainString = TableStorageConfig.DomainString,
                 Name = request.Name,
-                Description = request.Description
+                Description = request.Description,
+                ApiKey = GenerateApiKey()
             };
             await ProjectDataService.InsertAsync(project);
-            return Ok();
+
+            return Ok(project);
+        }
+
+        private string GenerateApiKey()
+        {
+            var key = new byte[32];
+            var generator = RandomNumberGenerator.Create();
+            generator.GetBytes(key);
+            return Convert.ToBase64String(key);
         }
     }
 }

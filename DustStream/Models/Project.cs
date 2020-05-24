@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace DustStream.Models
 {
@@ -14,12 +15,14 @@ namespace DustStream.Models
             Name = name;
             Description = description;
         }
-        
+
         // Partition
+        [JsonIgnore]
         public string DomainString { get; set; }
         // Row
         public string Name { get; set; }
         public string Description { get; set; }
+        public string ApiKey { get; set; }
         public DateTimeOffset Timestamp { get; set; }
     }
 }
