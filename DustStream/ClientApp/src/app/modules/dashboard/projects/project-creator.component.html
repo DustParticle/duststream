@@ -5,7 +5,7 @@
 <br />
 
 <section fxLayout="row wrap" fxLayoutAlign="center center" class="project-creation">
-  <mat-card *ngIf="!isProjectCreated" fxFlex="500px" fxFlex.xs="100%">
+  <mat-card *ngIf="!project" fxFlex="500px" fxFlex.xs="100%">
     <mat-card-title>Create a new project</mat-card-title>
 
     <form [formGroup]="projectForm" class="project-form"
@@ -30,8 +30,22 @@
     </form>
   </mat-card>
 
-  <mat-card *ngIf="isProjectCreated" fxFlex="500px" fxFlex.xs="100%">
-    <mat-card-title>Project is created</mat-card-title>
+  <mat-card *ngIf="project" fxFlex="500px" fxFlex.xs="100%">
     <mat-icon>check_circle_outline</mat-icon>
+    <mat-card-title>Project is created</mat-card-title>
+    <mat-card-content class="project-form">
+      <mat-form-field>
+        <input *ngIf="project" matInput type="text" placeholder="Project name" disabled value="{{ project.name }}">
+      </mat-form-field>
+
+      <mat-form-field>
+        <textarea *ngIf="project" matInput placeholder="Project Description" rows="4" disabled>{{ project.description }}</textarea>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input *ngIf="project" matInput type="text" placeholder="Api Key" disabled value="{{ project.apiKey }}">
+        <mat-hint>Copy the Api Key now. It isn't stored and you won't be able to see it again.</mat-hint>
+      </mat-form-field>
+    </mat-card-content>
   </mat-card>
 </section>

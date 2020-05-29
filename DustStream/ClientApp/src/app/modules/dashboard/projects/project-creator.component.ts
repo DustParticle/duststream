@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IProject } from '../models';
 import { ProjectService } from './project.service';
 
 @Component({
@@ -10,7 +11,8 @@ import { ProjectService } from './project.service';
 export class ProjectCreatorComponent {
   projectForm: FormGroup;
   createProjectError: string = "";
-  isProjectCreated: boolean = false;
+  project: IProject;
+  apiKey: string;
 
   constructor(private formBuilder: FormBuilder, private projectService: ProjectService) { }
 
@@ -27,8 +29,8 @@ export class ProjectCreatorComponent {
 
   createProject(project: any): void {
     this.createProjectError = "";
-    this.projectService.createProject(project).subscribe((response) => {
-      this.isProjectCreated = true;
+    this.projectService.createProject(project).subscribe((response: IProject) => {
+      this.project = response;
     }, (error) => {
       this.createProjectError = error.error.message;
     });

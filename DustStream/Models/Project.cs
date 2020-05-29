@@ -22,7 +22,10 @@ namespace DustStream.Models
         // Row
         public string Name { get; set; }
         public string Description { get; set; }
-        public string ApiKey { get; set; }
         public DateTimeOffset Timestamp { get; set; }
+        // Ignore this property in table store
+        public string ApiKey { get; set; }
+        [JsonIgnore]
+        public string HashedApiKey { get; set; }
     }
 }

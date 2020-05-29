@@ -1,0 +1,26 @@
+<div *ngIf="project">
+  <div>
+    <h3>{{project.name}}</h3>
+    <p>{{project.description}}</p>
+  </div>
+</div>
+
+<br />
+<mat-divider></mat-divider>
+<br />
+
+<mat-tab-group dynamicHeight>
+  <mat-tab label="Settings">
+    <section fxLayout="row wrap" fxLayoutAlign="center center" class="project-settings">
+      <mat-form-field *ngIf="project" fxFlex="500px" fxFlex.xs="100%">
+        <mat-label>Api Key</mat-label>
+        <input matInput type="text" placeholder="Project name" disabled value="{{ project.apiKey }}">
+        <button mat-button matSuffix mat-icon-button aria-label="Generate" (click)="generateApiKey()">
+          <mat-icon>autorenew</mat-icon>
+        </button>
+        <mat-hint *ngIf="project.apiKey">Copy the Api Key now. It isn't stored and you won't be able to see it again.</mat-hint>
+        <mat-hint *ngIf="!project.apiKey">Regenerate Api Key. The old Api Key will be invalid.</mat-hint>
+      </mat-form-field>
+    </section>
+  </mat-tab>
+</mat-tab-group>

@@ -11,4 +11,7 @@ export interface IRevision {
   releaseLabel?: string;
   releaseNotes?: string;
   releaseDataLink?: string;
+
+
+  [key: string]: any;
 }
