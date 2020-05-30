@@ -19,6 +19,11 @@ stages:
       buildConfiguration: 'Release'
 
     steps:
+    - template: updateJobStatus.yml
+      parameters:
+        projectName: 'DustStream'
+        status: 'InProgress'
+
     - task: NuGetToolInstaller@1
 
     - task: NuGetCommand@2
@@ -49,6 +54,11 @@ stages:
         targetPath: '$(Build.ArtifactStagingDirectory)'
         artifactName: 'DustStream'
 
+    - template: updateJobStatus.yml
+      parameters:
+        projectName: 'DustStream'
+        status: $(Agent.JobStatus)
+
 - stage: Deploy
   dependsOn:
   - Build
@@ -58,16 +68,27 @@ stages:
     pool:
       vmImage: 'windows-latest'
     steps:
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          artifactName: 'DustStream'
-          path: '$(System.DefaultWorkingDirectory)'
+    - template: updateJobStatus.yml
+      parameters:
+        projectName: 'DustStream'
+        status: 'InProgress'
 
-      - task: AzureRmWebAppDeployment@4
-        inputs:
-          ConnectionType: 'AzureRM'
-          azureSubscription: 'DustStream (4607e418-5e6a-4c3d-8113-9f4fd115d17b)'
-          appType: 'webApp'
-          WebAppName: 'DustStream'
-          packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: 'DustStream'
+        path: '$(System.DefaultWorkingDirectory)'
 
+    - task: AzureRmWebAppDeployment@4
+      inputs:
+        ConnectionType: 'AzureRM'
+        azureSubscription: 'DustStream (4607e418-5e6a-4c3d-8113-9f4fd115d17b)'
+        appType: 'webApp'
+        WebAppName: 'DustStream'
+        packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+
+    - template: updateJobStatusTimeout.yml
+      parameters:
+        projectName: 'DustStream'
+        status: $(Agent.JobStatus)
+        interval: 120000 # retry to update status each 2 minutes
+        timeout: 1200000 # in 20 minutes
