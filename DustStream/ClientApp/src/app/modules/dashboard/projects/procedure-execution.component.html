@@ -1,45 +1,44 @@
-<div *ngIf="overallStatus">
-  <h3 class="procedure-header {{ overallStatus | status }}"
-      style="width: 90%">
-    {{procedureShortName}}
-  </h3>
-</div>
-
-<div *ngIf="procedureExecutions && procedureExecutions.length !== 0 && ciConfigurationHeader && ciConfigurationObj">
-  <table class="table-striped-rows table-hover" style="width: 90%">
-    <tr style="background-color: white">
-      <th width="170">Start Time</th>
-      <th *ngFor="let header of ciConfigurationHeader">{{ header }}</th>
-      <th>Status</th>
-      <th>Actions</th>
-    </tr>
-    <ng-container *ngFor="let execution of procedureExecutions; let i = index; let odd = odd; let even = even;">
-      <tr (click)="execution.isExpanded = !execution.isExpanded" [ngClass]="{'oddRowStyle': odd, 'evenRowStyle': even}">
-        <td>{{ execution.timestamp | date:"MM/dd/yyyy HH:mm:ss"}}</td>
-        <td *ngFor="let header of ciConfigurationHeader">{{ ciConfigurationObj[execution.jobId][header] }}</td>
-        <td style="padding: 4px">
-          <table style="width: 100%; height: 100%">
-            <tr>
-              <td class="{{ execution.status | status }}">
-                {{ execution.status }}
-              </td>
-            </tr>
-          </table>
-        </td>
-        <td>
-          <a *ngIf="execution.downloadLink" [href]="execution.downloadLink" title="Download">
-            <i class="fas fa-download px-1" aria-hidden="true"></i>
-          </a>
-          <a *ngIf="execution.consoleLog" [href]="execution.consoleLog" title="Log">
-            <i class="fas fa-clipboard-list px-1" aria-hidden="true"></i>
-          </a>
-          <a *ngIf="execution.machine" [href]="execution.machine" title="Machine">
-            <i class="fas fa-desktop px-1" aria-hidden="true"></i>
-          </a>
-        </td>
-      </tr>
+<div class="mat-elevation-z8">
+  <table class="procedure-table" *ngIf="peDataSource" mat-table [dataSource]="peDataSource">
+    <ng-container matColumnDef="timestamp">
+      <th mat-header-cell *matHeaderCellDef> Start Time </th>
+      <td mat-cell *matCellDef="let pe">{{ pe.timestamp | date:"MM/dd/yyyy HH:mm:ss" }}</td>
     </ng-container>
-  </table>
-  <br />
-</div>
 
+    <ng-container *ngFor="let col of displayedColumns | slice : 1 : -2" matColumnDef="{{ col }}">
+      <th mat-header-cell *matHeaderCellDef>{{ col }}</th>
+      <td mat-cell *matCellDef="let pe">
+        <div fxLayout="column">
+          <p fxFlex="100%">{{ pe[col] }}</p>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef> Status </th>
+      <td mat-cell *matCellDef="let pe" class="status-cell">
+        <div fxLayout="column" class="{{ pe.status | status }}">
+          <p fxFlex="100%">{{ pe.status }}</p>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let pe">
+        <a mat-icon-button *ngIf="pe.downloadLink" [href]="pe.downloadLink" title="Download">
+          <mat-icon>cloud_download</mat-icon>
+        </a>
+        <a mat-icon-button *ngIf="pe.consoleLog" [href]="pe.consoleLog" title="Log">
+          <mat-icon>analytics</mat-icon>
+        </a>
+        <a mat-icon-button *ngIf="pe.machine" [href]="pe.machine" title="Machine">
+          <mat-icon>desktop_windows</mat-icon>
+        </a>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>

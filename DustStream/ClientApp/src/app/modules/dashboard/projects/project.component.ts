@@ -12,7 +12,7 @@ import { MatTableDataSource } from '@angular/material';
   styleUrls: ['./project.component.scss']
 })
 export class ProjectComponent {
-  displayedColumns: string[] = [ 'createdTime', 'revisionNumber' ];
+  displayedColumns: string[];
   revisionsDataSource: MatTableDataSource<IRevision>;
   public revisions: IRevision[];
   public procedures: IProcedure[];
@@ -54,6 +54,7 @@ export class ProjectComponent {
               return (left > right ? 1 : left < right ? -1 : 0);
             });
 
+            this.displayedColumns = ['createdTime', 'revisionNumber'];
             for (var i: number = 0; i < this.procedures.length; ++i) {
               this.displayedColumns.push(this.procedures[i].shortName);
             }
