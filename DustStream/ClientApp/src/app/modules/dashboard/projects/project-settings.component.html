@@ -15,11 +15,17 @@
       <mat-form-field *ngIf="project" fxFlex="500px" fxFlex.xs="100%">
         <mat-label>Api Key</mat-label>
         <input matInput type="text" placeholder="Project name" disabled value="{{ project.apiKey }}">
-        <button mat-button matSuffix mat-icon-button aria-label="Generate" (click)="generateApiKey()">
+        <button mat-button matSuffix mat-icon-button aria-label="Copy to clipboard" (click)="copyApiKeyToClipboard()" [disabled]="!project.apiKey">
+          <mat-icon>
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1z" fill="currentColor" /></svg>
+          </mat-icon>
+        </button>
+        <button mat-button matSuffix mat-icon-button aria-label="Generate" (click)="generateApiKey()" [disabled]="isGeneratingApiKey">
           <mat-icon>autorenew</mat-icon>
         </button>
-        <mat-hint *ngIf="project.apiKey">Copy the Api Key now. It isn't stored and you won't be able to see it again.</mat-hint>
-        <mat-hint *ngIf="!project.apiKey">Regenerate Api Key. The old Api Key will be invalid.</mat-hint>
+        <mat-hint *ngIf="project.apiKey && !isGeneratingApiKey">Copy the Api Key now. It isn't stored and you won't be able to see it again.</mat-hint>
+        <mat-hint *ngIf="!project.apiKey && !isGeneratingApiKey">Regenerate Api Key. The old Api Key will be invalid.</mat-hint>
+        <mat-hint *ngIf="isGeneratingApiKey">Generating a new Api Key</mat-hint>
       </mat-form-field>
     </section>
   </mat-tab>
