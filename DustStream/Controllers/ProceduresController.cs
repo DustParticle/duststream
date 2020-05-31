@@ -94,7 +94,7 @@ namespace DustStream.Controllers
             return Json(Enum.GetName(typeof(ProcedureStatus), currentPriorityNumber));
         }
 
-        [ApiKeyAuthorize()]
+        [ApiKeyAuthorize("projectName")]
         [HttpPost("{procedureName}/executions/projects/{projectName}/revisions/{revisionNumber}/status/{status}")]
         public async Task<IActionResult> UpdateProcedureExecutionStatus([FromRoute] string procedureName, [FromRoute] string projectName,
             [FromRoute] string revisionNumber, [FromRoute] string status, [FromBody] JobStatusRequest jobStatus)
@@ -102,8 +102,7 @@ namespace DustStream.Controllers
             Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, projectName);
             if (project == null)
             {
-                project = new Project(TableStorageConfig.DomainString, projectName, "");
-                await ProjectDataService.InsertAsync(project);
+                return Unauthorized();
             }
 
             Revision revision = await RevisionDataService.GetAsync(projectName, revisionNumber);
