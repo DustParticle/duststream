@@ -5,7 +5,7 @@
 <br />
 
 <section fxLayout="row wrap" fxLayoutAlign="center center" class="project-creation">
-  <mat-card *ngIf="!isProjectCreated" fxFlex="500px" fxFlex.xs="100%">
+  <mat-card *ngIf="!project" fxFlex="500px" fxFlex.xs="100%">
     <mat-card-title>Create a new project</mat-card-title>
 
     <form [formGroup]="projectForm" class="project-form"
@@ -30,8 +30,27 @@
     </form>
   </mat-card>
 
-  <mat-card *ngIf="isProjectCreated" fxFlex="500px" fxFlex.xs="100%">
-    <mat-card-title>Project is created</mat-card-title>
+  <mat-card *ngIf="project" fxFlex="500px" fxFlex.xs="100%">
     <mat-icon>check_circle_outline</mat-icon>
+    <mat-card-title>Project is created</mat-card-title>
+    <mat-card-content class="project-form">
+      <mat-form-field>
+        <input *ngIf="project" matInput type="text" placeholder="Project name" disabled value="{{ project.name }}">
+      </mat-form-field>
+
+      <mat-form-field>
+        <textarea *ngIf="project" matInput placeholder="Project Description" rows="4" disabled>{{ project.description }}</textarea>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input *ngIf="project" matInput type="text" placeholder="Api Key" disabled value="{{ project.apiKey }}">
+        <button *ngIf="project" mat-button matSuffix mat-icon-button aria-label="Copy to clipboard" (click)="copyApiKeyToClipboard()" [disabled]="!project.apiKey">
+          <mat-icon>
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1z" fill="currentColor" /></svg>
+          </mat-icon>
+        </button>
+        <mat-hint [id]="apiKeyHint">Copy the Api Key now. It isn't stored and you won't be able to see it again.</mat-hint>
+      </mat-form-field>
+    </mat-card-content>
   </mat-card>
 </section>

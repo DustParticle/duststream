@@ -7,9 +7,8 @@ import { RouterModule } from '@angular/router';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { InsertAuthTokenInterceptor } from './insert-auth-token-interceptor';
-import { SidebarService } from './services/sidebar.service';
-
+import { CachingInterceptor, InsertAuthTokenInterceptor } from './interceptors';
+import { RequestCacheService, SidebarService } from './services';
 
 @NgModule({
   declarations: [
@@ -41,6 +40,12 @@ import { SidebarService } from './services/sidebar.service';
       useClass: InsertAuthTokenInterceptor,
       multi: true
     },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CachingInterceptor,
+      multi: true
+    },
+    RequestCacheService,
     SidebarService
   ]
 })

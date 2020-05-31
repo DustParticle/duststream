@@ -25,4 +25,8 @@ export class ProjectService {
         return value;
       }));
   }
+
+  public generateApiKey(projectName: any): Observable<object> {
+    return this.http.put('/api/projects/' + projectName + '/generateApiKey', '');
+  }
 }

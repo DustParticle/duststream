@@ -11,5 +11,5 @@ export interface IProcedureExecution {
   machine: string;
   description: string;
 
-  isExpanded?: boolean;     // for frondend only
+  [key: string]: any;
 }

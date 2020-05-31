@@ -3,6 +3,7 @@ export interface IProject {
   timestamp: Date;
   name: string;
   description: string;
+  apiKey: string;
 
   routerLink?: string[]
 }

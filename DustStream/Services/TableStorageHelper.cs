@@ -13,7 +13,7 @@ namespace DustStream.Services
         public static PocoTableStore<Project, string, string> GetProjectTableStore(string connectionString)
         {
             return new PocoTableStore<Project, string, string>(ProjectTable, connectionString,
-                c => c.DomainString, c => c.Name);
+                c => c.DomainString, c => c.Name, null, c => c.ApiKey);
         }
 
         public static PocoTableStore<Revision, string, string> GetRevisionTableStore(string connectionString)

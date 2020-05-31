@@ -9,6 +9,6 @@ namespace DustStream.Interfaces
         public Task<IEnumerable<Project>> GetAllByDomainAsync(string domainString);
         public Task<Project> GetAsync(string domainString, string projectName);
         public Task InsertAsync(Project project);
-        public Task InsertAsync(Project[] projects);
+        public Task UpdateAsync(Project project);
     }
 }
