@@ -27,10 +27,6 @@ export class ProcedureExecutionComponent implements OnInit {
       this.procedureExecutions = result;
       this.updateCIConfigurationHeader();
       this.peDataSource = new MatTableDataSource<IProcedureExecution>(this.procedureExecutions);
-
-      console.log(this.displayedColumns);
-      console.log(this.procedureExecutions);
-      console.log(this.peDataSource);
     });
   }
 
