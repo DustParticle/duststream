@@ -11,7 +11,10 @@ import { IProcedure, IRevision } from '../models';
 export class RevisionComponent {
   public revisionInfo: IRevision;
   public procedures: IProcedure[];
+  private projectName: string;
+  private revisionNumber: string;
 
+  public executionStatus: string[];
   public revisionCommitPayload: object;
 
   constructor(private route: ActivatedRoute, private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
@@ -19,15 +22,15 @@ export class RevisionComponent {
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      let projectName = params['projectName'];
-      let revisionNumber = params['revisionNumber'];
+      this.projectName = params['projectName'];
+      this.revisionNumber = params['revisionNumber'];
       this.revisionInfo = {
-        projectName: projectName,
-        revisionNumber: revisionNumber
+        projectName: this.projectName,
+        revisionNumber: this.revisionNumber
       };
 
       // Get revision info
-      this.http.get('/api/revisions/projects/' + projectName + '/' + revisionNumber).subscribe((revisionInfo: IRevision) => {
+      this.http.get('/api/revisions/projects/' + this.projectName + '/' + this.revisionNumber).subscribe((revisionInfo: IRevision) => {
         this.revisionInfo = revisionInfo;
 
         if (0 !== Object.keys(revisionInfo).length) {
@@ -44,7 +47,19 @@ export class RevisionComponent {
           let right = b.createdTime;
           return (left > right ? 1 : left < right ? -1 : 0);
         });
+
+        this.executionStatus = [];
+        this.executionStatus = [];
+        for (var j: number = 0; j < this.procedures.length; ++j) {
+          this.getRevisionProcedureStatus(this.procedures[j].shortName);
+        }
       });
+    });
+  }
+
+  getRevisionProcedureStatus(procedure) {
+    this.http.get('/api/procedures/' + procedure + '/executions/projects/' + this.projectName + '/revisions/' + this.revisionNumber + '/status').subscribe((result: string) => {
+      this.executionStatus[procedure] = result;
     });
   }
 }

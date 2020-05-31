@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
+import { AuthenticationGuard } from 'microsoft-adal-angular6';
 import { ProjectCreatorComponent } from './project-creator.component';
+import { ProjectSettingsComponent } from './project-settings.component';
 import { ProjectComponent } from './project.component';
 import { ProjectsComponent } from './projects.component';
 import { RevisionComponent } from './revision.component';
-import { AuthenticationGuard } from 'microsoft-adal-angular6';
 
 export const ProjectsRoutes: Routes = [
   {
@@ -23,9 +24,14 @@ export const ProjectsRoutes: Routes = [
         data: { title: 'Project Details' }
       },
       {
-        path: 'projects/view/:projectName/:revisionNumber',
+        path: 'view/:projectName/:revisionNumber',
         component: RevisionComponent,
         data: { title: 'Revision Details' }
+      },
+      {
+        path: 'settings/:projectName',
+        component: ProjectSettingsComponent,
+        data: { title: 'Project Settings' }
       }
     ]
   }

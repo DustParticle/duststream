@@ -1,63 +1,51 @@
 <div *ngIf="project">
-  <h2>{{project.name}}</h2>
-  {{project.description}}
+  <div class="button-bar">
+    <button mat-icon-button type="button" [matTooltip]="'Project settings'">
+      <a [routerLink]="['/projects/settings/' + project.name]"><mat-icon>settings</mat-icon></a>
+    </button>
+  </div>
+  <div>
+    <h3>{{project.name}}</h3>
+    <p>{{project.description}}</p>
+  </div>
 </div>
+
 <br />
-<table *ngIf="revisions && procedures" class="table-striped-rows table-hover">
-  <tr style="background-color: white">
-    <th width="40"></th>
-    <th width="170">Time</th>
-    <th width="130">Build Number</th>
-    <th colspan="1000"></th>
-  </tr>
-  <ng-container *ngFor="let revision of revisions; let i = index; let odd = odd; let even = even;">
-    <tr (click)="selectRow(revision)" [ngClass]="{'oddRowStyle': odd, 'evenRowStyle': even}">
-      <td>
-        <i class="fa" [ngClass]="{'icon-collapsed fa-plus-circle': isExpanded(revision) === false,
-                                          'icon-expanded fa-minus-circle': isExpanded(revision) === true}">
-        </i>
-      </td>
-      <td>{{revision.createdTime | date:"MM/dd/yyyy HH:mm:ss"}}</td>
-      <td>
-        <a [routerLink]="[revision.revisionNumber]"
-           routerLinkActive="active">{{revision.revisionNumber}}</a>
-      </td>
-      <td style="padding: 4px" *ngFor="let procedure of procedures">
-        <table style="width: 100%; height: 100%; background-color: transparent">
-          <tr>
-            <td *ngIf="executionStatus[revision.revisionNumber] && executionStatus[revision.revisionNumber][procedure.shortName]"
-                class="{{ executionStatus[revision.revisionNumber][procedure.shortName] | status }}">
-              {{procedure.shortName}}
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr *ngIf="isExpanded(revision)" style="border-top: hidden; background-color: initial">
-      <td colspan="1000">
-        <table class="table-expandable">
-          <tr>
-            <td>Build Number:</td>
-            <td>{{revision.revisionNumber}}</td>
-          </tr>
-          <tr *ngIf="revisionCommitSets[revision.revisionNumber]">
-            <td>Commit Set:</td>
-            <td [innerHTML]="revisionCommitSets[revision.revisionNumber]"></td>
-          </tr>
-          <tr *ngIf="revisionCommitPayload[revision.revisionNumber]">
-            <td>Repository:</td>
-            <td>{{revisionCommitPayload[revision.revisionNumber].repositoryName}}</td>
-          </tr>
-          <tr *ngIf="revisionCommitPayload[revision.revisionNumber]">
-            <td>Author:</td>
-            <td>{{revisionCommitPayload[revision.revisionNumber].author}}</td>
-          </tr>
-          <tr *ngIf="revisionCommitPayload[revision.revisionNumber]">
-            <td>Message:</td>
-            <td>{{revisionCommitPayload[revision.revisionNumber].message}}</td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </ng-container>
-</table>
+<mat-divider></mat-divider>
+<br />
+
+<mat-tab-group dynamicHeight>
+  <mat-tab label="All Builds">
+    <div class="mat-elevation-z8">
+      <table class="build-table" *ngIf="revisions" mat-table [dataSource]="revisionsDataSource">
+        <ng-container matColumnDef="createdTime">
+          <th mat-header-cell *matHeaderCellDef> Time </th>
+          <td mat-cell *matCellDef="let revision">{{ revision.createdTime | date:"MM/dd/yyyy HH:mm:ss" }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="revisionNumber">
+          <th mat-header-cell *matHeaderCellDef> Build Number </th>
+          <td mat-cell *matCellDef="let revision">
+            <a [routerLink]="[revision.revisionNumber]">{{ revision.revisionNumber }}</a>
+          </td>
+        </ng-container>
+
+        <ng-container *ngFor="let col of displayedColumns | slice : 2 : -1" matColumnDef="{{ col }}">
+          <th mat-header-cell *matHeaderCellDef>{{ col }}</th>
+          <td mat-cell *matCellDef="let revision" class="status-cell">
+            <div fxLayout="column" class="{{ executionStatus[revision.revisionNumber][col] | status }}">
+              <p fxFlex="100%">{{ executionStatus[revision.revisionNumber][col] ? revision[col] : '' }}</p>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="spacing">
+          <th class="th-spacing" mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let revision"></td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [matTooltip]="getCommitPayload(row.commitPayload)"></tr>
+      </table>
+    </div>
+  </mat-tab>
+</mat-tab-group>
