@@ -3,6 +3,13 @@ using System.Text.Json.Serialization;
 
 namespace DustStream.Models
 {
+    public class AzureDevOpsSettings
+    {
+        public string Url { get; set; }
+        public string Username { get; set; }
+        public string AccessToken { get; set; }
+    }
+
     public class Project
     {
         public Project()
@@ -25,6 +32,7 @@ namespace DustStream.Models
         public DateTimeOffset Timestamp { get; set; }
         // Ignore this property in table store
         public string ApiKey { get; set; }
+        public AzureDevOpsSettings AzureDevOps { get; set; }
         [JsonIgnore]
         public string HashedApiKey { get; set; }
     }
