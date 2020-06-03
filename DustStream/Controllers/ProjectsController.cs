@@ -50,16 +50,12 @@ namespace DustStream.Controllers
                 return Conflict(new { message = $"The project '{request.Name}' is already existed." });
             }
 
-            project = new Project()
-            {
-                DomainString = TableStorageConfig.DomainString,
-                Name = request.Name,
-                Description = request.Description,
-            };
-            UpdateApiKey(in project);
-            await ProjectDataService.InsertAsync(project);
+            request.DomainString = TableStorageConfig.DomainString;
+            request.Timestamp = DateTime.Now;
+            UpdateApiKey(in request);
+            await ProjectDataService.InsertAsync(request);
 
-            return Ok(project);
+            return Ok(request);
         }
 
         // TODO: support admin privilege
