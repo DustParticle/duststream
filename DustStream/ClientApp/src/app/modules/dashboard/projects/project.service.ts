@@ -29,4 +29,8 @@ export class ProjectService {
   public generateApiKey(projectName: any): Observable<object> {
     return this.http.put('/api/projects/' + projectName + '/generateApiKey', '');
   }
+
+  public updateCiService(project: any): Observable<object> {
+    return this.http.put('/api/projects/' + project.name + '/updateCiService', project);
+  }
 }

@@ -75,6 +75,22 @@ namespace DustStream.Controllers
             return Ok(project);
         }
 
+        [Authorize]
+        [HttpPut("{projectName}/updateCiService")]
+        public async Task<IActionResult> UpdateCiService([FromRoute] string projectName, [FromBody] Project request)
+        {
+            Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, request.Name);
+            if (null == project)
+            {
+                return NotFound();
+            }
+
+            project.AzureDevOps = request.AzureDevOps;
+            await ProjectDataService.UpdateAsync(project);
+
+            return Ok(project);
+        }
+
         private void UpdateApiKey(in Project project)
         {
             var key = new byte[32];

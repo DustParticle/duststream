@@ -9,24 +9,47 @@
 <mat-divider></mat-divider>
 <br />
 
-<mat-tab-group dynamicHeight>
+<mat-tab-group dynamicHeight class="project-settings">
   <mat-tab label="Settings">
-    <section fxLayout="row wrap" fxLayoutAlign="center center" class="project-settings">
-      <mat-form-field *ngIf="project" fxFlex="500px" fxFlex.xs="100%">
-        <mat-label>Api Key</mat-label>
-        <input matInput type="text" placeholder="Project name" disabled value="{{ project.apiKey }}">
-        <button mat-button matSuffix mat-icon-button aria-label="Copy to clipboard" (click)="copyApiKeyToClipboard()" [disabled]="!project.apiKey">
-          <mat-icon>
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1z" fill="currentColor" /></svg>
-          </mat-icon>
-        </button>
-        <button mat-button matSuffix mat-icon-button aria-label="Generate" (click)="generateApiKey()" [disabled]="isGeneratingApiKey">
-          <mat-icon>autorenew</mat-icon>
-        </button>
-        <mat-hint *ngIf="project.apiKey && !isGeneratingApiKey">Copy the Api Key now. It isn't stored and you won't be able to see it again.</mat-hint>
-        <mat-hint *ngIf="!project.apiKey && !isGeneratingApiKey">Regenerate Api Key. The old Api Key will be invalid.</mat-hint>
-        <mat-hint *ngIf="isGeneratingApiKey">Generating a new Api Key</mat-hint>
-      </mat-form-field>
-    </section>
+    <mat-card class="settings-section">
+      <mat-card-header>
+        <mat-card-title>Security</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-expansion-panel class="mat-elevation-z0" [expanded]="true">
+          <mat-expansion-panel-header class="settings-expansion-header"></mat-expansion-panel-header>
+          <mat-form-field *ngIf="project" class="settings-field">
+            <mat-label>Api Key</mat-label>
+            <input matInput type="text" placeholder="Project name" disabled value="{{ project.apiKey }}">
+            <button mat-button matSuffix mat-icon-button aria-label="Copy to clipboard" (click)="copyApiKeyToClipboard()" [disabled]="!project.apiKey">
+              <mat-icon>
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1z" fill="currentColor" /></svg>
+              </mat-icon>
+            </button>
+            <button mat-button matSuffix mat-icon-button aria-label="Generate" (click)="generateApiKey()" [disabled]="isGeneratingApiKey">
+              <mat-icon>autorenew</mat-icon>
+            </button>
+            <mat-hint *ngIf="project.apiKey && !isGeneratingApiKey">Copy the Api Key now. It isn't stored and you won't be able to see it again.</mat-hint>
+            <mat-hint *ngIf="!project.apiKey && !isGeneratingApiKey">Regenerate Api Key. The old Api Key will be invalid.</mat-hint>
+            <mat-hint *ngIf="isGeneratingApiKey">Generating a new Api Key</mat-hint>
+          </mat-form-field>
+        </mat-expansion-panel>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="settings-section">
+      <mat-card-header>
+        <mat-card-title>CI/CD Service</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-expansion-panel class="mat-elevation-z0" [expanded]="true">
+          <mat-expansion-panel-header class="settings-expansion-header"></mat-expansion-panel-header>
+          <ci-service-form #ciServiceForm [project]="project"></ci-service-form>
+        </mat-expansion-panel>
+        <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
+          <button *ngIf="ciFormGroup" mat-button [disabled]="!ciFormGroup.dirty || isUpdatingCiService" (click)="updateCiService()">Update</button>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </mat-tab>
 </mat-tab-group>
