@@ -1,59 +1,16 @@
-.build-table {
-  width: 100%;
+.project-settings {
+  .settings-section {
+    margin-top: 1em;
+    margin-bottom: 1em;
 
-  th.mat-header-cell:first-of-type, td.mat-cell:first-of-type {
-    padding-left: 30px;
-  }
+    .settings-expansion-header {
+      position: absolute;
+      right: 0px;
+      top: 0px;
+    }
 
-  th.mat-header-cell:last-of-type, td.mat-cell:last-of-type {
-    padding-right: 30px;
-  }
-
-  th, td {
-    padding-right: 10px;
-    padding-left: 10px;
-    white-space: nowrap;
-  }
-
-  .th-spacing {
-    width: 100%
-  }
-
-  .statusFailed {
-    background-color: red;
-  }
-
-  .statusInProgress {
-    background-color: darkgrey;
-  }
-
-  .statusInQueue {
-    background-color: white;
-  }
-
-  .statusSuccess {
-    background-color: lawngreen;
-  }
-
-  .statusNoStatus {
-    background-color: transparent;
-  }
-
-  .status-cell {
-    height: 1px;
-
-    div {
-      padding: 0 5px 0 5px;
-      height: 100%;
-
-      p {
-        text-align: center;
-      }
+    .settings-field {
+      width: 100%
     }
   }
-}
-
-.button-bar {
-  float: right;
-  padding: 8px;
 }

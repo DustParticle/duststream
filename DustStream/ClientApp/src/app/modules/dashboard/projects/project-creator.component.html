@@ -31,33 +31,7 @@
 
         <mat-step [stepControl]="ciFormGroup">
           <ng-template matStepLabel>CI/CD (optional)</ng-template>
-          <form [formGroup]="ciFormGroup" class="stepper-form stepper"
-                fxLayout="column wrap" fxLayoutAlign="start center" fxLayoutGap="10px">
-            <mat-form-field>
-              <mat-label>CI/CD Service</mat-label>
-              <mat-select formControlName="ciService">
-                <mat-option value="">-- None --</mat-option>
-                <mat-option value="AzureDevOps">Azure DevOps</mat-option>
-              </mat-select>
-            </mat-form-field>
-            <ng-container *ngIf="project.azureDevOps">
-              <mat-form-field>
-                <mat-label>Azure Project Url</mat-label>
-                <input matInput formControlName="azureProjectUrl" placeholder="Ex: https://dev.azure.com/{organization}/{project}"
-                       [(ngModel)]="project.azureDevOps.url" required>
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label>Azure Username</mat-label>
-                <input matInput formControlName="azureUsername" placeholder="Azure Username" 
-                       [(ngModel)]="project.azureDevOps.username" required>
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label>Azure Access Token</mat-label>
-                <input matInput formControlName="azurePersonalAccessToken" placeholder="Azure Personal Access Token" 
-                       [(ngModel)]="project.azureDevOps.accessToken" required>
-              </mat-form-field>
-            </ng-container>
-          </form>
+          <ci-service-form #ciServiceForm class="stepper-form stepper" [project]="project"></ci-service-form>
           <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
             <button mat-button matStepperPrevious>Back</button>
             <button mat-button (click)="createProject()" [disabled]="!ciFormGroup.valid">Create</button>

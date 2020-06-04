@@ -2,8 +2,9 @@ import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar, MatStepper } from '@angular/material';
 import { ClipboardService } from 'ngx-clipboard';
-import { IProject, IAzureDevOpsSettings } from '../models';
+import { IAzureDevOpsSettings, IProject } from '../models';
 import { ProjectService } from './project.service';
+import { CiServiceFormComponent } from './forms/ci-service-form.component';
 
 enum CreateStatus {
   None,
@@ -13,13 +14,14 @@ enum CreateStatus {
 }
 
 @Component({
-  selector: 'project',
+  selector: 'project-creator',
   templateUrl: './project-creator.component.html',
   styleUrls: ['./project-creator.component.scss']
 })
 export class ProjectCreatorComponent {
   CreateStatus = CreateStatus;
   @ViewChild('stepper', { static: false }) private stepper: MatStepper;
+  @ViewChild('ciServiceForm', { static: false }) private ciServiceForm: CiServiceFormComponent;
 
   projectInfoFormGroup: FormGroup;
   ciFormGroup: FormGroup;
@@ -57,6 +59,10 @@ export class ProjectCreatorComponent {
     });
 
     this.setCiServiceValidators();
+  }
+
+  ngAfterViewInit(): void {
+    this.ciFormGroup = this.ciServiceForm.ciFormGroup;
   }
 
   createProject(): void {
