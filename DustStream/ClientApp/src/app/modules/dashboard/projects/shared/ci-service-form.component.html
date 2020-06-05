@@ -1,4 +1,4 @@
-<form [formGroup]="ciFormGroup" class="ci-service-form"
+<form *ngIf="form && project" [formGroup]="form" class="ci-service-form"
       fxLayout="column wrap" fxLayoutAlign="start center" fxLayoutGap="10px">
   <mat-form-field>
     <mat-label>CI/CD Service</mat-label>
@@ -13,7 +13,7 @@
       <input matInput formControlName="azureProjectUrl" placeholder="Ex: https://dev.azure.com/{organization}/{project}"
              [(ngModel)]="project.azureDevOps.url" required>
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field>  
       <mat-label>Azure Username</mat-label>
       <input matInput formControlName="azureUsername" placeholder="Azure Username"
              [(ngModel)]="project.azureDevOps.username" required>
@@ -23,5 +23,11 @@
       <input matInput formControlName="azurePersonalAccessToken" placeholder="Azure Personal Access Token"
              [(ngModel)]="project.azureDevOps.accessToken" required>
     </mat-form-field>
+    <mat-form-field>
+      <mat-label>Build Definition</mat-label>
+      <input matInput formControlName="azureBuildDefinition" placeholder="Azure Build Definition"
+             [(ngModel)]="project.azureDevOps.buildDefinition" required>
+    </mat-form-field>
   </ng-container>
+  <variables [(variables)]="project.variables"></variables>
 </form>

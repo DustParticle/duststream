@@ -8,6 +8,13 @@ namespace DustStream.Models
         public string Url { get; set; }
         public string Username { get; set; }
         public string AccessToken { get; set; }
+        public string BuildDefinition { get; set; }
+    }
+
+    public class Variable
+    {
+        public string Key { get; set; }
+        public string Value { get; set; }
     }
 
     public class Project
@@ -33,6 +40,7 @@ namespace DustStream.Models
         // Ignore this property in table store
         public string ApiKey { get; set; }
         public AzureDevOpsSettings AzureDevOps { get; set; }
+        public Variable[] Variables { get; set; }
         [JsonIgnore]
         public string HashedApiKey { get; set; }
     }

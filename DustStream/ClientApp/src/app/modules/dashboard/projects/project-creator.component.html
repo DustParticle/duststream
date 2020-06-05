@@ -31,7 +31,7 @@
 
         <mat-step [stepControl]="ciFormGroup">
           <ng-template matStepLabel>CI/CD (optional)</ng-template>
-          <ci-service-form #ciServiceForm class="stepper-form stepper" [project]="project"></ci-service-form>
+          <ci-service-form #ciServiceForm class="stepper-form stepper" [project]="project" [form]="ciFormGroup"></ci-service-form>
           <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
             <button mat-button matStepperPrevious>Back</button>
             <button mat-button (click)="createProject()" [disabled]="!ciFormGroup.valid">Create</button>

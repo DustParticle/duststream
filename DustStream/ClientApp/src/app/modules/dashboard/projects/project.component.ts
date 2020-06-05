@@ -1,10 +1,11 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, Inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { MatDialog, MatTableDataSource } from '@angular/material';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IProcedure, IRevision } from '../models';
 import { IProject } from '../models/project.model';
 import { ProjectService } from './project.service';
-import { HttpClient } from '@angular/common/http';
-import { MatTableDataSource } from '@angular/material';
+import { NewBuildComponent } from './shared/new-build.component';
 
 @Component({
   selector: 'project',
@@ -21,8 +22,9 @@ export class ProjectComponent {
   public executionStatus: string[][];
   public projectName: string;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, @Inject('BASE_URL') baseUrl: string,
-    private projectService: ProjectService) {
+  constructor(private route: ActivatedRoute, private router: Router,
+    private http: HttpClient, @Inject('BASE_URL') baseUrl: string,
+    private projectService: ProjectService, public dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -87,5 +89,20 @@ export class ProjectComponent {
   getCommitPayload(commitPayload: string) {
     let obj = JSON.parse(commitPayload);
     return `Repository: ${obj.repositoryName}\nAuthor: ${obj.author}\nMessage: ${obj.message}`;
+  }
+
+  goToSettings(): void {
+    this.router.navigate(['/projects/settings/' + this.project.name]);
+  }
+
+  goToTriggerNewBuild(): void {
+    const dialogRef = this.dialog.open(NewBuildComponent, {
+      width: '600px',
+      data: this.project
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 }
