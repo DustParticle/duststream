@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>Trigger A New Build</h2>
+
+<mat-dialog-content class="mat-typography">
+  <form *ngIf="project" [formGroup]="form" class="new-build-form"
+        fxLayout="column wrap" fxLayoutAlign="start center" fxLayoutGap="10px">
+    <mat-form-field>
+      <mat-label>Branch</mat-label>
+      <input matInput formControlName="branch" placeholder="Branch to trigger"
+             [(ngModel)]="branch" required>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Commit</mat-label>
+      <input matInput formControlName="commit" placeholder="Commit to trigger"
+             [(ngModel)]="commit" required>
+    </mat-form-field>
+    <variables [(variables)]="variables"></variables>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="center">
+  <button mat-raised-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" cdkFocusInitial (click)="trigger()">Trigger</button>
+</mat-dialog-actions>
+

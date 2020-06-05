@@ -44,10 +44,10 @@
       <mat-card-content>
         <mat-expansion-panel class="mat-elevation-z0" [expanded]="true">
           <mat-expansion-panel-header class="settings-expansion-header"></mat-expansion-panel-header>
-          <ci-service-form #ciServiceForm [project]="project"></ci-service-form>
+          <ci-service-form #ciServiceForm [project]="project" [form]="ciFormGroup"></ci-service-form>
         </mat-expansion-panel>
         <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
-          <button *ngIf="ciFormGroup" mat-button [disabled]="!ciFormGroup.dirty || isUpdatingCiService" (click)="updateCiService()">Update</button>
+          <button *ngIf="ciFormGroup" mat-button [disabled]="!ciFormGroup.valid || !ciFormGroup.dirty || isUpdatingCiService" (click)="updateCiService()">Update</button>
         </div>
       </mat-card-content>
     </mat-card>

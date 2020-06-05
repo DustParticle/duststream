@@ -17,7 +17,7 @@ namespace DustStream.Controllers
     public class ProjectsController : Controller
     {
         private readonly TableStorageOptions TableStorageConfig;
-        private IProjectDataService ProjectDataService;
+        private readonly IProjectDataService ProjectDataService;
 
         public ProjectsController(IOptions<TableStorageOptions> TableStorageConfig, IProjectDataService projectDataService)
         {
@@ -79,13 +79,14 @@ namespace DustStream.Controllers
         [HttpPut("{projectName}/updateCiService")]
         public async Task<IActionResult> UpdateCiService([FromRoute] string projectName, [FromBody] Project request)
         {
-            Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, request.Name);
+            Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, projectName);
             if (null == project)
             {
                 return NotFound();
             }
 
             project.AzureDevOps = request.AzureDevOps;
+            project.Variables = request.Variables;
             await ProjectDataService.UpdateAsync(project);
 
             return Ok(project);

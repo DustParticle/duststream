@@ -2,10 +2,9 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule, MatCardModule, MatDividerModule, MatExpansionModule, MatFormFieldModule, MatGridListModule, MatIconModule, MatInputModule, MatProgressSpinnerModule, MatSelectModule, MatSnackBarModule, MatStepperModule, MatTableModule, MatTabsModule, MatTooltipModule } from '@angular/material';
+import { MatButtonModule, MatCardModule, MatDialogModule, MatDividerModule, MatExpansionModule, MatFormFieldModule, MatGridListModule, MatIconModule, MatInputModule, MatProgressSpinnerModule, MatSelectModule, MatSnackBarModule, MatStepperModule, MatTableModule, MatTabsModule, MatTooltipModule } from '@angular/material';
 import { RouterModule } from '@angular/router';
 import { ClipboardModule } from 'ngx-clipboard';
-import { CiServiceFormComponent } from './forms/ci-service-form.component';
 import { ProcedureExecutionComponent } from './procedure-execution.component';
 import { ProjectCreatorComponent } from './project-creator.component';
 import { ProjectSettingsComponent } from './project-settings.component';
@@ -13,6 +12,9 @@ import { ProjectComponent } from './project.component';
 import { ProjectService } from './project.service';
 import { ProjectsComponent } from './projects.component';
 import { RevisionComponent } from './revision.component';
+import { CiServiceFormComponent } from './shared/ci-service-form.component';
+import { NewBuildComponent } from './shared/new-build.component';
+import { VariablesComponent } from './shared/variables.component';
 import { StatusPipe } from './status.pipe';
 
 
@@ -22,6 +24,7 @@ import { StatusPipe } from './status.pipe';
     ClipboardModule,
     MatButtonModule,
     MatCardModule,
+    MatDialogModule,
     MatDividerModule,
     MatExpansionModule,
     MatFormFieldModule,
@@ -43,6 +46,8 @@ import { StatusPipe } from './status.pipe';
   declarations: [
     StatusPipe,
     CiServiceFormComponent,
+    VariablesComponent,
+    NewBuildComponent,
     ProjectComponent,
     ProjectsComponent,
     RevisionComponent,
@@ -52,6 +57,9 @@ import { StatusPipe } from './status.pipe';
   ],
   providers: [
     ProjectService
+  ],
+  entryComponents: [
+    NewBuildComponent
   ]
 })
 export class ProjectsModule { }

@@ -1,11 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { ClipboardService } from 'ngx-clipboard';
 import { IProject } from '../models/project.model';
-import { CiServiceFormComponent } from './forms/ci-service-form.component';
 import { ProjectService } from './project.service';
+import { CiServiceFormComponent } from './shared/ci-service-form.component';
 
 @Component({
   selector: 'project-settings',
@@ -21,8 +21,9 @@ export class ProjectSettingsComponent {
   public isGeneratingApiKey: boolean = false;
   public isUpdatingCiService: boolean = false;
 
-  constructor(private route: ActivatedRoute, private projectService: ProjectService,
-    private clipboardService: ClipboardService, private snackBar: MatSnackBar) {
+  constructor(private route: ActivatedRoute, private formBuilder: FormBuilder,
+    private projectService: ProjectService, private clipboardService: ClipboardService,
+    private snackBar: MatSnackBar) {
   }
 
   ngOnInit(): void {
@@ -34,10 +35,8 @@ export class ProjectSettingsComponent {
         this.project = project;
       });
     });
-  }
 
-  ngAfterViewInit(): void {
-    setTimeout(() => this.ciFormGroup = this.ciServiceForm.ciFormGroup);
+    this.ciFormGroup = this.formBuilder.group({});
   }
 
   generateApiKey(): void {
@@ -55,7 +54,6 @@ export class ProjectSettingsComponent {
 
   updateCiService(): void {
     this.isUpdatingCiService = true;
-    console.log(this.project);
     this.projectService.updateCiService(this.project).subscribe((project: IProject) => {
       this.project = project;
       this.snackBar.open("The CI/CD Service is updated!", null, { duration: 1000 });
