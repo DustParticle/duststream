@@ -41,10 +41,10 @@ namespace DustStream.Controllers
         }
 
         private readonly TableStorageOptions TableStorageConfig;
-        private IProjectDataService ProjectDataService;
-        private IRevisionDataService RevisionDataService;
-        private IProcedureDataService ProcedureDataService;
-        private IProcedureExecutionDataService ProcedureExecutionDataService;
+        private readonly IProjectDataService ProjectDataService;
+        private readonly IRevisionDataService RevisionDataService;
+        private readonly IProcedureDataService ProcedureDataService;
+        private readonly IProcedureExecutionDataService ProcedureExecutionDataService;
 
         public ProceduresController(IOptions<TableStorageOptions> TableStorageConfig,
             IProjectDataService projectDataService,
@@ -108,26 +108,32 @@ namespace DustStream.Controllers
             Revision revision = await RevisionDataService.GetAsync(projectName, revisionNumber);
             if (revision == null)
             {
-                revision = new Revision(projectName, revisionNumber, jobStatus.CommitSet, JsonSerializer.Serialize(jobStatus.Commit));
-                revision.CreatedTime = DateTimeOffset.Now;
+                revision = new Revision(projectName, revisionNumber, jobStatus.CommitSet, JsonSerializer.Serialize(jobStatus.Commit))
+                {
+                    CreatedTime = DateTimeOffset.Now
+                };
                 await RevisionDataService.InsertAsync(revision);
             }
 
             Procedure procedure = await ProcedureDataService.GetAsync(projectName, procedureName);
             if (procedure == null)
             {
-                procedure = new Procedure(projectName, procedureName);
-                procedure.CreatedTime = DateTimeOffset.Now;
-                procedure.LongName = procedureName;
+                procedure = new Procedure(projectName, procedureName)
+                {
+                    CreatedTime = DateTimeOffset.Now,
+                    LongName = procedureName
+                };
                 await ProcedureDataService.InsertAsync(procedure);
             }
 
             // Update status
             ProcedureExecution procedureExecution = new ProcedureExecution(revisionNumber, jobStatus.JobId, procedureName,
-                JsonSerializer.Serialize(jobStatus.CiConfiguration), status);
-            procedureExecution.DownloadLink = jobStatus.DownloadLink;
-            procedureExecution.ConsoleLog = jobStatus.ConsoleLog;
-            procedureExecution.Machine = jobStatus.Machine;
+                JsonSerializer.Serialize(jobStatus.CiConfiguration), status)
+            {
+                DownloadLink = jobStatus.DownloadLink,
+                ConsoleLog = jobStatus.ConsoleLog,
+                Machine = jobStatus.Machine
+            };
             await ProcedureExecutionDataService.InsertOrReplaceAsync(projectName, procedureExecution);
 
             return Ok();

@@ -2,18 +2,21 @@
 
 <mat-dialog-content class="mat-typography">
   <form *ngIf="project" [formGroup]="form" class="new-build-form"
-        fxLayout="column wrap" fxLayoutAlign="start center" fxLayoutGap="10px">
+        fxLayout="column wrap" fxLayoutAlign="start start" fxLayoutGap="10px">
     <mat-form-field>
       <mat-label>Branch</mat-label>
       <input matInput formControlName="branch" placeholder="Branch to trigger"
-             [(ngModel)]="branch" required>
+             [(ngModel)]="triggerBuildRequest.branch" required>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Commit</mat-label>
       <input matInput formControlName="commit" placeholder="Commit to trigger"
-             [(ngModel)]="commit" required>
+             [(ngModel)]="triggerBuildRequest.commit" required>
     </mat-form-field>
-    <variables [(variables)]="variables"></variables>
+    <section class="checkbox">
+      <mat-checkbox formControlName="customVariables" [(ngModel)]="useDefaultVariables">Use default variables</mat-checkbox>
+    </section>
+    <variables *ngIf="!useDefaultVariables" [(variables)]="triggerBuildRequest.variables"></variables>
   </form>
 </mat-dialog-content>
 

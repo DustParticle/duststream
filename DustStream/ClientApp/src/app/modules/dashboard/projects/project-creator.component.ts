@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar, MatStepper } from '@angular/material';
 import { ClipboardService } from 'ngx-clipboard';
 import { IProject } from '../models';
-import { ProjectService } from './project.service';
+import { ProjectService } from './services';
 import { CiServiceFormComponent } from './shared/ci-service-form.component';
 
 enum CreateStatus {

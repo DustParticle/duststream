@@ -5,7 +5,8 @@ namespace DustStream.Models
 {
     public class AzureDevOpsSettings
     {
-        public string Url { get; set; }
+        public string Organization { get; set; }
+        public string Project { get; set; }
         public string Username { get; set; }
         public string AccessToken { get; set; }
         public string BuildDefinition { get; set; }

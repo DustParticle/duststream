@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { ClipboardService } from 'ngx-clipboard';
 import { IProject } from '../models/project.model';
-import { ProjectService } from './project.service';
+import { ProjectService } from './services';
 import { CiServiceFormComponent } from './shared/ci-service-form.component';
 
 @Component({
