@@ -9,11 +9,16 @@
   </mat-form-field>
   <ng-container *ngIf="project && project.azureDevOps">
     <mat-form-field>
-      <mat-label>Azure Project Url</mat-label>
-      <input matInput formControlName="azureProjectUrl" placeholder="Ex: https://dev.azure.com/{organization}/{project}"
-             [(ngModel)]="project.azureDevOps.url" required>
+      <mat-label>Organization</mat-label>
+      <input matInput formControlName="azureOrganization" placeholder="Azure Organization"
+             [(ngModel)]="project.azureDevOps.organization" required>
     </mat-form-field>
-    <mat-form-field>  
+    <mat-form-field>
+      <mat-label>Project</mat-label>
+      <input matInput formControlName="azureProject" placeholder="Azure Project"
+             [(ngModel)]="project.azureDevOps.project" required>
+    </mat-form-field>
+    <mat-form-field>
       <mat-label>Azure Username</mat-label>
       <input matInput formControlName="azureUsername" placeholder="Azure Username"
              [(ngModel)]="project.azureDevOps.username" required>

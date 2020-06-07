@@ -12,8 +12,13 @@ export class CiServiceFormComponent {
   @Input() form: FormGroup;
   isFormInitialized: boolean = false;
 
+  azureControlNames = ['azureOrganization', 'azureProject',
+    'azureUsername', 'azurePersonalAccessToken',
+    'azureBuildDefinition'];
+
   azureDevOpsSettings: IAzureDevOpsSettings = {
-    url: '',
+    organization: '',
+    project: '',
     username: '',
     accessToken: '',
     buildDefinition: ''
@@ -26,10 +31,6 @@ export class CiServiceFormComponent {
   }
 
   setCiServiceValidators(): void {
-    let azureProjectUrlControl = this.form.get('azureProjectUrl');
-    const azureControls = [azureProjectUrlControl, this.form.get('azureUsername'),
-      this.form.get('azurePersonalAccessToken'), , this.form.get('azureBuildDefinition')];
-
     let ciServiceControl = this.form.get('ciService');
     if (this.project.azureDevOps) {
       this.azureDevOpsSettings = this.project.azureDevOps;
@@ -37,18 +38,18 @@ export class CiServiceFormComponent {
     } else {
       ciServiceControl.setValue('');
     }
+
     ciServiceControl.valueChanges.subscribe(ciService => {
       if (ciService === 'AzureDevOps') {
-        azureControls.forEach(control => { control.setValidators([Validators.required]) });
-        azureProjectUrlControl.setValidators([Validators.required, Validators.pattern(/https:\/\/dev.azure.com\/\b([-a-zA-Z0-9@:%_\+.~#?&=]*)\/\b([-a-zA-Z0-9@:%_\+.~#?&=]*)$/)]);
+        this.azureControlNames.forEach(controlName => this.form.get(controlName).setValidators([Validators.required]));
         if (this.project)
           this.project.azureDevOps = this.azureDevOpsSettings;
       } else if (ciService === '') {
-        azureControls.forEach(control => control.setValidators(null));
+        this.azureControlNames.forEach(controlName => this.form.get(controlName).setValidators(null));
         if (this.project)
           delete this.project.azureDevOps;
       }
-      azureControls.forEach(control => control.updateValueAndValidity());
+      this.azureControlNames.forEach(controlName => this.form.get(controlName).updateValueAndValidity());
     });
   }
 
@@ -62,10 +63,7 @@ export class CiServiceFormComponent {
         this.project.variables = [];
 
       this.form.addControl('ciService', new FormControl());
-      this.form.addControl('azureProjectUrl', new FormControl());
-      this.form.addControl('azureUsername', new FormControl());
-      this.form.addControl('azurePersonalAccessToken', new FormControl());
-      this.form.addControl('azureBuildDefinition', new FormControl());
+      this.azureControlNames.forEach(controlName => this.form.addControl(controlName, new FormControl()));
 
       this.setCiServiceValidators();
       this.isFormInitialized = true;

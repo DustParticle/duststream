@@ -1,7 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { IVariable, IProject } from '../../models';
+import { MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
+import { IProject, ITriggerBuildRequest } from '../../models';
+import { RevisionService } from '../services';
 
 @Component({
   selector: 'new-build',
@@ -10,25 +11,43 @@ import { IVariable, IProject } from '../../models';
 })
 export class NewBuildComponent {
   form: FormGroup;
-  branch: string = 'master';
-  commit: string = 'HEAD';
-  variables: IVariable[];
-  project: IProject;
 
-  constructor(private formBuilder: FormBuilder, private dialogRef: MatDialogRef<NewBuildComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IProject) {
+  useDefaultVariables: boolean = true;
+  project: IProject;
+  triggerBuildRequest: ITriggerBuildRequest = {
+    branch: 'master',
+    commit: 'HEAD',
+    variables: []
+  };
+
+  constructor(private formBuilder: FormBuilder, private snackBar: MatSnackBar,
+    private dialogRef: MatDialogRef<NewBuildComponent>, @Inject(MAT_DIALOG_DATA) public data: IProject,
+    private revisionService: RevisionService) {
     this.project = data;
-    this.variables = data.variables.slice();      // Create a copied version of variables
+
+    if (!this.project.variables)
+      this.project.variables = [];
+    this.triggerBuildRequest.variables = this.project.variables.slice();      // Create a copied version of variables
   }
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
       branch: ['', Validators.required],
-      commit: ['', Validators.required]
+      commit: ['', Validators.required],
+      customVariables: [true]
     });
   }
 
   trigger(): void {
+    if (this.useDefaultVariables) {
+      this.triggerBuildRequest.variables = this.project.variables.slice();
+    }
+    this.revisionService.triggerBuild(this.project.name, this.triggerBuildRequest).subscribe(() => {
+      this.snackBar.open('Triggerred build successfully!', null, { duration: 1000 });
+    }, () => {
+      this.snackBar.open('Failed to trigger build!', null, { duration: 1000 });
+    });
+
     this.dialogRef.close();
   }
 }

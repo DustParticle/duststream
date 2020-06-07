@@ -42,6 +42,7 @@ namespace DustStream
             services.AddSingleton<IRevisionDataService, RevisionDataService>();
             services.AddSingleton<IProcedureDataService, ProcedureDataService>();
             services.AddSingleton<IProcedureExecutionDataService, ProcedureExecutionDataService>();
+            services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
