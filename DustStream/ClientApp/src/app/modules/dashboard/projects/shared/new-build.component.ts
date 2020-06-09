@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
+import { MatDialogRef, MatSnackBar, MAT_DIALOG_DATA } from '@angular/material';
 import { IProject, ITriggerBuildRequest } from '../../models';
 import { RevisionService } from '../services';
 
@@ -28,12 +28,17 @@ export class NewBuildComponent {
     if (!this.project.variables)
       this.project.variables = [];
     this.triggerBuildRequest.variables = this.project.variables.slice();      // Create a copied version of variables
+
+    if (this.project.azureDevOps) {
+      this.triggerBuildRequest.azurePat = '';
+    }
   }
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
       branch: ['', Validators.required],
       commit: ['', Validators.required],
+      azurePat: ['', (this.project.azureDevOps ? Validators.required : null)],
       customVariables: [true]
     });
   }

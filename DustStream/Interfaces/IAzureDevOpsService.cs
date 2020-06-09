@@ -5,7 +5,7 @@ namespace DustStream.Interfaces
 {
     public interface IAzureDevOpsService
     {
-        public Task<Revision> TriggerBuild(AzureDevOpsSettings azureDevOpsSettings,
-            string branch, string commit, Variable[] variables);
+        public Task<Revision> QueueBuild(AzureDevOpsSettings azureDevOpsSettings,
+            QueueAzureBuildRequest request);
     }
 }

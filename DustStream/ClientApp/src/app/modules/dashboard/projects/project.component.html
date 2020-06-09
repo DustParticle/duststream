@@ -1,6 +1,6 @@
 <div *ngIf="project">
   <div class="button-bar">
-    <button mat-icon-button type="button" [matTooltip]="'Trigger new build'" (click)="goToTriggerNewBuild()">
+    <button mat-icon-button type="button" [matTooltip]="'Trigger new build'" [disabled]="!project?.azureDevOps" (click)="goToTriggerNewBuild()">
       <mat-icon>add_circle</mat-icon>
     </button>
     <button mat-icon-button type="button" [matTooltip]="'Project settings'" (click)="goToSettings()">

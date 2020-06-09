@@ -9,13 +9,6 @@ using System.Threading.Tasks;
 
 namespace DustStream.Controllers
 {
-    public class TriggerRequest
-    {
-        public string Branch { get; set; }
-        public string Commit { get; set; }
-        public Variable[] Variables { get; set; }
-    }
-
     [Route("api/[controller]")]
     public class RevisionsController : Controller
     {
@@ -49,7 +42,7 @@ namespace DustStream.Controllers
 
         [Authorize]
         [HttpPost("projects/{projectName}/trigger")]
-        public async Task<IActionResult> Trigger([FromRoute] string projectName, [FromBody] TriggerRequest request)
+        public async Task<IActionResult> Trigger([FromRoute] string projectName, [FromBody] QueueAzureBuildRequest request)
         {
             Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, projectName);
             if (null == project)
@@ -60,7 +53,7 @@ namespace DustStream.Controllers
             if (project.AzureDevOps != null)
             {
                 // Trigger Azure DevOps build
-                Revision revision = await AzureDevOpsService.TriggerBuild(project.AzureDevOps, request.Branch, request.Commit, request.Variables);
+                Revision revision = await AzureDevOpsService.QueueBuild(project.AzureDevOps, request);
                 if (revision != null)
                     return Ok(revision);
                 return StatusCode(500);

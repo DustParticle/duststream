@@ -10,11 +10,6 @@
         </mat-form-field>
       </td>
       <td mat-footer-cell *matFooterCellDef>
-        <ng-container *ngIf="addingVariable">
-          <mat-form-field>
-            <input matInput placeholder="New Key" [value]="addingVariable.key" [(ngModel)]="addingVariable.key" required>
-          </mat-form-field>
-        </ng-container>
       </td>
     </ng-container>
 
@@ -27,11 +22,6 @@
       </td>
       <ng-container *ngIf="addable">
         <td mat-footer-cell *matFooterCellDef>
-          <ng-container *ngIf="addingVariable">
-            <mat-form-field>
-              <input matInput placeholder="New Value" [value]="addingVariable.value" [(ngModel)]="addingVariable.value" required>
-            </mat-form-field>
-          </ng-container>
         </td>
       </ng-container>
     </ng-container>
@@ -45,16 +35,9 @@
       </td>
       <ng-container *ngIf="addable">
         <td mat-footer-cell *matFooterCellDef>
-          <ng-container *ngIf="!addingVariable">
-            <button mat-mini-fab color="primary" (click)="createAddingVariable()">
-              <mat-icon>add</mat-icon>
-            </button>
-          </ng-container>
-          <ng-container *ngIf="addingVariable">
-            <button mat-mini-fab color="primary" [disabled]="!addingVariable.key || !addingVariable.value" (click)="addVariable()">
-              <mat-icon>done</mat-icon>
-            </button>
-          </ng-container>
+          <button mat-mini-fab color="primary" (click)="addVariable()">
+            <mat-icon>add</mat-icon>
+          </button>
         </td>
       </ng-container>
     </ng-container>

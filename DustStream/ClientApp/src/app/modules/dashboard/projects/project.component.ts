@@ -99,9 +99,5 @@ export class ProjectComponent {
       width: '600px',
       data: this.project
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
   }
 }

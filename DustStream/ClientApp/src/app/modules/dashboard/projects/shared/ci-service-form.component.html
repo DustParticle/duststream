@@ -7,7 +7,7 @@
       <mat-option value="AzureDevOps">Azure DevOps</mat-option>
     </mat-select>
   </mat-form-field>
-  <ng-container *ngIf="project && project.azureDevOps">
+  <ng-container *ngIf="project?.azureDevOps">
     <mat-form-field>
       <mat-label>Organization</mat-label>
       <input matInput formControlName="azureOrganization" placeholder="Azure Organization"
@@ -19,20 +19,10 @@
              [(ngModel)]="project.azureDevOps.project" required>
     </mat-form-field>
     <mat-form-field>
-      <mat-label>Azure Username</mat-label>
-      <input matInput formControlName="azureUsername" placeholder="Azure Username"
-             [(ngModel)]="project.azureDevOps.username" required>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Azure Access Token</mat-label>
-      <input matInput formControlName="azurePersonalAccessToken" placeholder="Azure Personal Access Token"
-             [(ngModel)]="project.azureDevOps.accessToken" required>
-    </mat-form-field>
-    <mat-form-field>
       <mat-label>Build Definition</mat-label>
       <input matInput formControlName="azureBuildDefinition" placeholder="Azure Build Definition"
              [(ngModel)]="project.azureDevOps.buildDefinition" required>
     </mat-form-field>
   </ng-container>
-  <variables [(variables)]="project.variables"></variables>
+  <variables [(variables)]="project.variables" [form]="form"></variables>
 </form>
