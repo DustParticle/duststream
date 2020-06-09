@@ -13,14 +13,11 @@ export class CiServiceFormComponent {
   isFormInitialized: boolean = false;
 
   azureControlNames = ['azureOrganization', 'azureProject',
-    'azureUsername', 'azurePersonalAccessToken',
     'azureBuildDefinition'];
 
   azureDevOpsSettings: IAzureDevOpsSettings = {
     organization: '',
     project: '',
-    username: '',
-    accessToken: '',
     buildDefinition: ''
   };
 

@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,10 +28,10 @@ namespace DustStream.Services
         {
         }
 
-        public async Task<Revision> TriggerBuild(AzureDevOpsSettings azureDevOps,
-            string branch, string commit, Variable[] variables)
+        public async Task<Revision> QueueBuild(AzureDevOpsSettings azureDevOps,
+            QueueAzureBuildRequest queueBuildRequest)
         {
-            Dictionary<string, string> parameters = variables.ToDictionary(v => v.Key, v => v.Value);
+            Dictionary<string, string> parameters = queueBuildRequest.Variables.ToDictionary(v => v.Key, v => v.Value);
             TriggerBuildRequest request = new TriggerBuildRequest()
             {
                 Parameters = JsonConvert.SerializeObject(parameters),
@@ -40,7 +39,7 @@ namespace DustStream.Services
             };
 
             string url = "build/builds?api-version=5.1";
-            HttpClient httpClient = GetHttpClient(azureDevOps);
+            HttpClient httpClient = GetHttpClient(azureDevOps, "", queueBuildRequest.AzurePat);
             var response = await httpClient.PostAsJsonAsync(url, request);
 
             if (response.IsSuccessStatusCode)
@@ -51,11 +50,12 @@ namespace DustStream.Services
             return null;
         }
 
-        private HttpClient GetHttpClient(AzureDevOpsSettings azureDevOps)
+        private HttpClient GetHttpClient(AzureDevOpsSettings azureDevOps,
+            string username, string personalAccessToken)
         {
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
-                Convert.ToBase64String(Encoding.UTF8.GetBytes($"{azureDevOps.Username}:{azureDevOps.AccessToken}")));
+                Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{personalAccessToken}")));
             httpClient.BaseAddress = new Uri($"https://dev.azure.com/{azureDevOps.Organization}/{azureDevOps.Project}/_apis/");
             return httpClient;
         }

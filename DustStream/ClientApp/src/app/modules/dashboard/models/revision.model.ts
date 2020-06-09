@@ -21,4 +21,6 @@ export interface ITriggerBuildRequest {
   branch: string;
   commit: string;
   variables: IVariable[];
+
+  azurePat?: string;
 }

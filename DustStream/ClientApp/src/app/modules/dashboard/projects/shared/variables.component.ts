@@ -15,7 +15,6 @@ export class VariablesComponent {
 
   variablesDataSource = new MatTableDataSource();
   displayedColumns = ['key', 'value', 'actions'];
-  addingVariable: IVariable = undefined;
 
   constructor() { }
 
@@ -30,13 +29,9 @@ export class VariablesComponent {
     this.variablesDataSource.data = this.variables;
   }
 
-  createAddingVariable(): void {
-    this.addingVariable = { key: '', value: '' };
-  }
-
   addVariable(): void {
-    this.variables.push(this.addingVariable);
-    this.addingVariable = undefined;
+    let addingVariable: IVariable = { key: '', value: '' };
+    this.variables.push(addingVariable);
     this.variablesDataSource.data = this.variables;
   }
 }

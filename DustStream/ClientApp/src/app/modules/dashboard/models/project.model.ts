@@ -1,8 +1,6 @@
 export interface IAzureDevOpsSettings {
   organization: string;
   project: string;
-  username: string;
-  accessToken: string;
   buildDefinition: string;
 }
 

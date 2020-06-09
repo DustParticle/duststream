@@ -51,7 +51,6 @@ export class ProjectCreatorComponent {
   }
 
   createProject(): void {
-    console.log(this.project);
     this.stepper.next();
     this.status = CreateStatus.Creating;
     this.projectService.createProject(this.project).subscribe((response: IProject) => {
