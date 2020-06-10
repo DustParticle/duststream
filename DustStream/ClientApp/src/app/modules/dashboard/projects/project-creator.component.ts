@@ -51,6 +51,8 @@ export class ProjectCreatorComponent {
   }
 
   createProject(): void {
+    this.project = Object.assign({}, this.projectInfoFormGroup.value);
+    this.project = Object.assign(this.project, this.ciFormGroup.value);
     this.stepper.next();
     this.status = CreateStatus.Creating;
     this.projectService.createProject(this.project).subscribe((response: IProject) => {

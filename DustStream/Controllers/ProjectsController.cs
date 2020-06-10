@@ -87,7 +87,7 @@ namespace DustStream.Controllers
 
             project.AzureDevOps = request.AzureDevOps;
             project.Variables = request.Variables;
-            await ProjectDataService.UpdateAsync(project);
+            await ProjectDataService.ReplaceAsync(project);
 
             return Ok(project);
         }

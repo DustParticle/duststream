@@ -15,13 +15,11 @@
                 fxLayout="column wrap" fxLayoutAlign="start center" fxLayoutGap="10px">
             <mat-form-field>
               <mat-label>Name</mat-label>
-              <input matInput formControlName="name" placeholder="Project name"
-                     [(ngModel)]="project.name" required>
+              <input matInput formControlName="name" placeholder="Project name" required>
             </mat-form-field>
             <mat-form-field>
               <mat-label>Description</mat-label>
-              <textarea matInput formControlName="description" placeholder="Project Description"
-                        [(ngModel)]="project.description" rows="4" required></textarea>
+              <textarea matInput formControlName="description" placeholder="Project Description" rows="4" required></textarea>
             </mat-form-field>
           </form>
           <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
