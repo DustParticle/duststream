@@ -17,7 +17,7 @@ namespace DustStream.Extensions
     {
         private const string ApiKeyHeaderName = "X-Api-Key";
         public string RouteName { get; set; }
-        
+
         public ApiKeyAuthorize(string routeName)
         {
             this.RouteName = routeName;
