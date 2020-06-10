@@ -10,5 +10,6 @@ namespace DustStream.Interfaces
         public Task<Project> GetAsync(string domainString, string projectName);
         public Task InsertAsync(Project project);
         public Task UpdateAsync(Project project);
+        public Task ReplaceAsync(Project project);
     }
 }

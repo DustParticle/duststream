@@ -1,6 +1,6 @@
 import { Component, Input, SimpleChanges } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { IAzureDevOpsSettings, IProject } from '../../models';
+import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { IProject } from '../../models';
 
 @Component({
   selector: 'ci-service-form',
@@ -12,42 +12,39 @@ export class CiServiceFormComponent {
   @Input() form: FormGroup;
   isFormInitialized: boolean = false;
 
-  azureControlNames = ['azureOrganization', 'azureProject',
-    'azureBuildDefinition'];
+  groupNames: Map<string, string[]> = new Map<string, string[]>();
+  currentGroupName: string = '';
 
-  azureDevOpsSettings: IAzureDevOpsSettings = {
-    organization: '',
-    project: '',
-    buildDefinition: ''
-  };
-
-  constructor() { }
+  constructor() {
+    this.groupNames.set('azureDevOps', ['organization', 'project', 'buildDefinition']);
+  }
 
   ngOnInit(): void {
     this.initializeForm();
   }
 
-  setCiServiceValidators(): void {
-    let ciServiceControl = this.form.get('ciService');
-    if (this.project.azureDevOps) {
-      this.azureDevOpsSettings = this.project.azureDevOps;
-      ciServiceControl.setValue('AzureDevOps');
-    } else {
-      ciServiceControl.setValue('');
-    }
-
+  setCiServiceGroups(ciServiceControl: AbstractControl): void {
     ciServiceControl.valueChanges.subscribe(ciService => {
-      if (ciService === 'AzureDevOps') {
-        this.azureControlNames.forEach(controlName => this.form.get(controlName).setValidators([Validators.required]));
-        if (this.project)
-          this.project.azureDevOps = this.azureDevOpsSettings;
-      } else if (ciService === '') {
-        this.azureControlNames.forEach(controlName => this.form.get(controlName).setValidators(null));
-        if (this.project)
-          delete this.project.azureDevOps;
+      if (this.currentGroupName) {
+        this.form.removeControl(this.currentGroupName);
       }
-      this.azureControlNames.forEach(controlName => this.form.get(controlName).updateValueAndValidity());
+
+      this.currentGroupName = ciService;
+      if (ciService) {
+        this.switchFormGroup();
+      }
     });
+  }
+
+  switchFormGroup(): FormGroup {
+    let formGroup = new FormGroup({});
+    this.groupNames.get(this.currentGroupName).forEach(controlName => {
+      let control = new FormControl();
+      control.setValidators([Validators.required]);
+      formGroup.addControl(controlName, control);
+    });
+    this.form.addControl(this.currentGroupName, formGroup);
+    return formGroup;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -59,10 +56,18 @@ export class CiServiceFormComponent {
       if (!this.project.variables)
         this.project.variables = [];
 
-      this.form.addControl('ciService', new FormControl());
-      this.azureControlNames.forEach(controlName => this.form.addControl(controlName, new FormControl()));
+      let ciServiceControl = new FormControl();
+      this.form.addControl('ciService', ciServiceControl);
 
-      this.setCiServiceValidators();
+      if (this.project.azureDevOps) {
+        ciServiceControl.patchValue('azureDevOps');
+        this.currentGroupName = 'azureDevOps';
+        this.switchFormGroup().patchValue(this.project.azureDevOps);
+      } else {
+        ciServiceControl.patchValue('');
+      }
+
+      this.setCiServiceGroups(ciServiceControl);
       this.isFormInitialized = true;
     }
   }

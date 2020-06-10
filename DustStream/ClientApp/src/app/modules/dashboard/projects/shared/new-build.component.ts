@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MatSnackBar, MAT_DIALOG_DATA } from '@angular/material';
-import { IProject, ITriggerBuildRequest } from '../../models';
+import { IProject, ITriggerBuildRequest, IVariable } from '../../models';
 import { RevisionService } from '../services';
 
 @Component({
@@ -11,14 +11,9 @@ import { RevisionService } from '../services';
 })
 export class NewBuildComponent {
   form: FormGroup;
-
   useDefaultVariables: boolean = true;
   project: IProject;
-  triggerBuildRequest: ITriggerBuildRequest = {
-    branch: 'master',
-    commit: 'HEAD',
-    variables: []
-  };
+  variables: IVariable[];
 
   constructor(private formBuilder: FormBuilder, private snackBar: MatSnackBar,
     private dialogRef: MatDialogRef<NewBuildComponent>, @Inject(MAT_DIALOG_DATA) public data: IProject,
@@ -27,32 +22,35 @@ export class NewBuildComponent {
 
     if (!this.project.variables)
       this.project.variables = [];
-    this.triggerBuildRequest.variables = this.project.variables.slice();      // Create a copied version of variables
 
+    let controls: any = {
+      branch: ['master', Validators.required],
+      commit: ['HEAD', Validators.required]
+    };
     if (this.project.azureDevOps) {
-      this.triggerBuildRequest.azurePat = '';
+      controls.azurePat = ['', Validators.required];
     }
-  }
+    this.form = this.formBuilder.group(controls);
 
-  ngOnInit(): void {
-    this.form = this.formBuilder.group({
-      branch: ['', Validators.required],
-      commit: ['', Validators.required],
-      azurePat: ['', (this.project.azureDevOps ? Validators.required : null)],
-      customVariables: [true]
-    });
+    this.variables = this.project.variables.slice();
   }
 
   trigger(): void {
+    let triggerBuildRequest: ITriggerBuildRequest = this.form.value;
+
     if (this.useDefaultVariables) {
-      this.triggerBuildRequest.variables = this.project.variables.slice();
+      triggerBuildRequest.variables = this.project.variables.slice();
     }
-    this.revisionService.triggerBuild(this.project.name, this.triggerBuildRequest).subscribe(() => {
+    this.revisionService.triggerBuild(this.project.name, triggerBuildRequest).subscribe(() => {
       this.snackBar.open('Triggerred build successfully!', null, { duration: 1000 });
     }, () => {
       this.snackBar.open('Failed to trigger build!', null, { duration: 1000 });
     });
 
     this.dialogRef.close();
+  }
+
+  showVariables(event) {
+    this.useDefaultVariables = event.checked;
   }
 }
