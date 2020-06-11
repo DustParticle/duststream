@@ -21,6 +21,7 @@ namespace DustStream.Services
             var tableStore = TableStorageHelper.GetProcedureTableStore(TableStorageConfig.ConnectionString);
             return tableStore.GetByPartitionKeyAsync(projectName);
         }
+
         public Task<Procedure> GetAsync(string projectName, string procedureName)
         {
             var tableStore = TableStorageHelper.GetProcedureTableStore(TableStorageConfig.ConnectionString);
