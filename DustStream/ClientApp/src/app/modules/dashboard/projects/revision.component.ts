@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, Inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IProcedure, IRevision } from '../models';
+import { ProcedureService, RevisionService } from './services';
 
 @Component({
   selector: 'revision',
@@ -17,7 +17,8 @@ export class RevisionComponent {
   public executionStatus: string[];
   public revisionCommitPayload: object;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+  constructor(private route: ActivatedRoute,
+    private revisionService: RevisionService, private procedureService: ProcedureService) {
   }
 
   ngOnInit(): void {
@@ -30,7 +31,7 @@ export class RevisionComponent {
       };
 
       // Get revision info
-      this.http.get('/api/revisions/projects/' + this.projectName + '/' + this.revisionNumber).subscribe((revisionInfo: IRevision) => {
+      this.revisionService.getRevisionByProject(this.projectName, this.revisionNumber).subscribe((revisionInfo: IRevision) => {
         this.revisionInfo = revisionInfo;
 
         if (0 !== Object.keys(revisionInfo).length) {
@@ -38,7 +39,7 @@ export class RevisionComponent {
         }
       });
 
-      this.http.get('/api/procedures/projects/' + this.revisionInfo.projectName).subscribe((result: IProcedure[]) => {
+      this.procedureService.getProceduresByProject(this.revisionInfo.projectName).subscribe((result: IProcedure[]) => {
         this.procedures = result;
 
         // Sort procedures by Created Time, ascending
@@ -58,7 +59,7 @@ export class RevisionComponent {
   }
 
   getRevisionProcedureStatus(procedure) {
-    this.http.get('/api/procedures/' + procedure + '/executions/projects/' + this.projectName + '/revisions/' + this.revisionNumber + '/status').subscribe((result: string) => {
+    this.procedureService.getProceduresStatusByRevision(this.projectName, this.revisionNumber, procedure).subscribe((result: string) => {
       this.executionStatus[procedure] = result;
     });
   }

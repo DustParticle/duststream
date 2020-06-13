@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { MatTableDataSource } from '@angular/material';
 import { IProcedureExecution } from '../models';
-import { MatTableDataSource, MatTab } from '@angular/material';
+import { ProcedureService } from './services';
 
 @Component({
   selector: 'procedure-execution',
@@ -16,14 +16,13 @@ export class ProcedureExecutionComponent implements OnInit {
   @Input() revisionNumber: string;
   @Input() procedureShortName: string;
 
-  public overallStatus: string;
   public procedureExecutions: IProcedureExecution[];
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+  constructor(private procedureService: ProcedureService) {
   }
 
   ngOnInit() {
-      this.http.get('/api/procedures/' + this.procedureShortName + '/executions/projects/' + this.projectName + '/revisions/' + this.revisionNumber).subscribe((result: IProcedureExecution[]) => {
+    this.procedureService.getProceduresByRevision(this.projectName, this.revisionNumber, this.procedureShortName).subscribe((result: IProcedureExecution[]) => {
       this.procedureExecutions = result;
       this.updateCIConfigurationHeader();
       this.peDataSource = new MatTableDataSource<IProcedureExecution>(this.procedureExecutions);

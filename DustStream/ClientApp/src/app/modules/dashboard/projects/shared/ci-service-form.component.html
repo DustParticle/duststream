@@ -1,0 +1,25 @@
+<form *ngIf="form && project" [formGroup]="form" class="ci-service-form"
+      fxLayout="column wrap" fxLayoutAlign="start center" fxLayoutGap="10px">
+  <mat-form-field>
+    <mat-label>CI/CD Service</mat-label>
+    <mat-select formControlName="ciService">
+      <mat-option value="">-- None --</mat-option>
+      <mat-option value="azureDevOps">Azure DevOps</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <ng-container *ngIf="currentGroupName === 'azureDevOps'" formGroupName="azureDevOps">
+    <mat-form-field>
+      <mat-label>Organization</mat-label>
+      <input matInput formControlName="organization" placeholder="Azure Organization" required>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Project</mat-label>
+      <input matInput formControlName="project" placeholder="Azure Project" required>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Build Definition</mat-label>
+      <input matInput formControlName="buildDefinition" placeholder="Azure Build Definition" required>
+    </mat-form-field>
+  </ng-container>
+  <variables [variables]="project.variables" [form]="form"></variables>
+</form>

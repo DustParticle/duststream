@@ -5,52 +5,80 @@
 <br />
 
 <section fxLayout="row wrap" fxLayoutAlign="center center" class="project-creation">
-  <mat-card *ngIf="!project" fxFlex="500px" fxFlex.xs="100%">
+  <mat-card fxFlex="60%" fxFlex.xs="100%">
     <mat-card-title>Create a new project</mat-card-title>
+    <mat-card-content>
+      <mat-horizontal-stepper [linear]="true" #stepper>
+        <mat-step [stepControl]="projectInfoFormGroup">
+          <ng-template matStepLabel>Project Information</ng-template>
+          <form [formGroup]="projectInfoFormGroup" class="stepper-form stepper"
+                fxLayout="column wrap" fxLayoutAlign="start center" fxLayoutGap="10px">
+            <mat-form-field>
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" placeholder="Project name" required>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" placeholder="Project Description" rows="4" required></textarea>
+            </mat-form-field>
+          </form>
+          <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
+            <button mat-button matStepperNext>Next</button>
+          </div>
+        </mat-step>
 
-    <form [formGroup]="projectForm" class="project-form"
-          novalidate (ngSubmit)="createProject(projectForm.value)" fxLayout="column wrap" fxLayoutAlign="center center" fxLayoutGap="10px">
-      <mat-error *ngIf="createProjectError">{{ createProjectError }}</mat-error>
+        <mat-step [stepControl]="ciFormGroup">
+          <ng-template matStepLabel>CI/CD (optional)</ng-template>
+          <ci-service-form #ciServiceForm class="stepper-form stepper" [project]="project" [form]="ciFormGroup"></ci-service-form>
+          <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
+            <button mat-button matStepperPrevious>Back</button>
+            <button mat-button (click)="createProject()" [disabled]="!ciFormGroup.valid">Create</button>
+          </div>
+        </mat-step>
 
-      <mat-card-content>
-        <mat-form-field>
-          <input matInput type="text" placeholder="Project name" formControlName="name" id="name" required>
-          <mat-error *ngIf="hasError('name', 'required')">Name is required</mat-error>
-        </mat-form-field>
+        <mat-step>
+          <ng-template matStepLabel>{{ status == CreateStatus.None ? 'Finish' : CreateStatus[status] }}</ng-template>
 
-        <mat-form-field>
-          <textarea matInput placeholder="Project Description" rows="4" formControlName="description" id="description" required></textarea>
-          <mat-error *ngIf="hasError('description', 'required')">Description is required</mat-error>
-        </mat-form-field>
-      </mat-card-content>
+          <div fxLayout="column wrap" fxLayoutAlign="start center" fxLayoutGap="10px">
+            <ng-container *ngIf="status === CreateStatus.Creating">
+              <mat-spinner></mat-spinner>
+              <mat-card-title>Project is creating</mat-card-title>
+            </ng-container>
 
-      <mat-card-actions align="center">
-        <button mat-raised-button color="primary" [disabled]="!projectForm.valid">Create</button>
-      </mat-card-actions>
-    </form>
-  </mat-card>
+            <ng-container *ngIf="status === CreateStatus.Created">
+              <div>
+                <mat-icon>check_circle_outline</mat-icon>
+              </div>
+              <form *ngIf="status === CreateStatus.Created" class="stepper-form stepper">
+                <mat-form-field>
+                  <input *ngIf="status === CreateStatus.Created" matInput type="text" placeholder="Project name" disabled value="{{ project.name }}">
+                </mat-form-field>
+                <mat-form-field>
+                  <textarea *ngIf="status === CreateStatus.Created" matInput placeholder="Project Description" rows="4" disabled>{{ project.description }}</textarea>
+                </mat-form-field>
+                <mat-form-field>
+                  <input *ngIf="status === CreateStatus.Created" matInput type="text" placeholder="Api Key" disabled value="{{ project.apiKey }}">
+                  <button *ngIf="status === CreateStatus.Created" mat-button matSuffix mat-icon-button aria-label="Copy to clipboard" (click)="copyApiKeyToClipboard()" [disabled]="!project.apiKey">
+                    <mat-icon>
+                      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1z" fill="currentColor" /></svg>
+                    </mat-icon>
+                  </button>
+                  <mat-hint [id]="apiKeyHint">Copy the Api Key now. It isn't stored and you won't be able to see it again.</mat-hint>
+                </mat-form-field>
+              </form>
+            </ng-container>
 
-  <mat-card *ngIf="project" fxFlex="500px" fxFlex.xs="100%">
-    <mat-icon>check_circle_outline</mat-icon>
-    <mat-card-title>Project is created</mat-card-title>
-    <mat-card-content class="project-form">
-      <mat-form-field>
-        <input *ngIf="project" matInput type="text" placeholder="Project name" disabled value="{{ project.name }}">
-      </mat-form-field>
-
-      <mat-form-field>
-        <textarea *ngIf="project" matInput placeholder="Project Description" rows="4" disabled>{{ project.description }}</textarea>
-      </mat-form-field>
-
-      <mat-form-field>
-        <input *ngIf="project" matInput type="text" placeholder="Api Key" disabled value="{{ project.apiKey }}">
-        <button *ngIf="project" mat-button matSuffix mat-icon-button aria-label="Copy to clipboard" (click)="copyApiKeyToClipboard()" [disabled]="!project.apiKey">
-          <mat-icon>
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1z" fill="currentColor" /></svg>
-          </mat-icon>
-        </button>
-        <mat-hint [id]="apiKeyHint">Copy the Api Key now. It isn't stored and you won't be able to see it again.</mat-hint>
-      </mat-form-field>
+            <ng-container *ngIf="status === CreateStatus.Error">
+              <div class="stepper">
+                <mat-error>{{ createProjectError }}</mat-error>
+              </div>
+              <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
+                <button mat-button matStepperPrevious>Back</button>
+              </div>
+            </ng-container>
+          </div>
+        </mat-step>
+      </mat-horizontal-stepper>
     </mat-card-content>
   </mat-card>
 </section>

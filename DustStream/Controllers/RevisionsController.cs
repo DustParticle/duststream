@@ -13,12 +13,17 @@ namespace DustStream.Controllers
     public class RevisionsController : Controller
     {
         private readonly TableStorageOptions TableStorageConfig;
-        private IRevisionDataService RevisionDataService;
+        private readonly IRevisionDataService RevisionDataService;
+        private readonly IProjectDataService ProjectDataService;
+        private readonly IAzureDevOpsService AzureDevOpsService;
 
-        public RevisionsController(IOptions<TableStorageOptions> TableStorageConfig, IRevisionDataService revisionDataService)
+        public RevisionsController(IOptions<TableStorageOptions> TableStorageConfig, IRevisionDataService revisionDataService,
+            IProjectDataService projectDataService, IAzureDevOpsService azureDevOpsService)
         {
             this.TableStorageConfig = TableStorageConfig.Value;
             this.RevisionDataService = revisionDataService;
+            this.ProjectDataService = projectDataService;
+            this.AzureDevOpsService = azureDevOpsService;
         }
 
         [Authorize]
@@ -33,6 +38,28 @@ namespace DustStream.Controllers
         public async Task<Revision> GetRevision([FromRoute] string projectName, [FromRoute] string revisionNumber)
         {
             return await RevisionDataService.GetAsync(projectName, revisionNumber);
+        }
+
+        [Authorize]
+        [HttpPost("projects/{projectName}/trigger")]
+        public async Task<IActionResult> Trigger([FromRoute] string projectName, [FromBody] QueueAzureBuildRequest request)
+        {
+            Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, projectName);
+            if (null == project)
+            {
+                return new NotFoundObjectResult("Project not found");
+            }
+
+            if (project.AzureDevOps != null)
+            {
+                // Trigger Azure DevOps build
+                Revision revision = await AzureDevOpsService.QueueBuild(project.AzureDevOps, request);
+                if (revision != null)
+                    return Ok(revision);
+                return StatusCode(500);
+            }
+
+            return new NotFoundObjectResult("CI/CD service not found");
         }
     }
 }
