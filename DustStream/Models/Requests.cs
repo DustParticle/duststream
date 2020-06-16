@@ -6,9 +6,4 @@
         public string Commit { get; set; }
         public Variable[] Variables { get; set; }
     }
-
-    public class QueueAzureBuildRequest : QueueBuildRequest
-    {
-        public string AzurePat { get; set; }
-    }
 }

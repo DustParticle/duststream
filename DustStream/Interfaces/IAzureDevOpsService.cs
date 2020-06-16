@@ -6,6 +6,6 @@ namespace DustStream.Interfaces
     public interface IAzureDevOpsService
     {
         public Task<Revision> QueueBuild(AzureDevOpsSettings azureDevOpsSettings,
-            QueueAzureBuildRequest request);
+            QueueBuildRequest request, string accessToken);
     }
 }

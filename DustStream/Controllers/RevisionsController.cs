@@ -4,7 +4,13 @@ using DustStream.Options;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DustStream.Controllers
@@ -13,14 +19,16 @@ namespace DustStream.Controllers
     public class RevisionsController : Controller
     {
         private readonly TableStorageOptions TableStorageConfig;
+        private readonly AzureAdOptions AzureAdConfig;
         private readonly IRevisionDataService RevisionDataService;
         private readonly IProjectDataService ProjectDataService;
         private readonly IAzureDevOpsService AzureDevOpsService;
 
-        public RevisionsController(IOptions<TableStorageOptions> TableStorageConfig, IRevisionDataService revisionDataService,
-            IProjectDataService projectDataService, IAzureDevOpsService azureDevOpsService)
+        public RevisionsController(IOptions<TableStorageOptions> TableStorageConfig, IOptions<AzureAdOptions> AzureAdConfig,
+            IRevisionDataService revisionDataService, IProjectDataService projectDataService, IAzureDevOpsService azureDevOpsService)
         {
             this.TableStorageConfig = TableStorageConfig.Value;
+            this.AzureAdConfig = AzureAdConfig.Value;
             this.RevisionDataService = revisionDataService;
             this.ProjectDataService = projectDataService;
             this.AzureDevOpsService = azureDevOpsService;
@@ -41,8 +49,8 @@ namespace DustStream.Controllers
         }
 
         [Authorize]
-        [HttpPost("projects/{projectName}/trigger")]
-        public async Task<IActionResult> Trigger([FromRoute] string projectName, [FromBody] QueueAzureBuildRequest request)
+        [HttpPost("projects/{projectName}/trigger/azure")]
+        public async Task<IActionResult> TriggerAzure([FromRoute] string projectName, [FromBody] QueueBuildRequest request)
         {
             Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, projectName);
             if (null == project)
@@ -52,14 +60,28 @@ namespace DustStream.Controllers
 
             if (project.AzureDevOps != null)
             {
-                // Trigger Azure DevOps build
-                Revision revision = await AzureDevOpsService.QueueBuild(project.AzureDevOps, request);
+                string aadAccessToken = this.HttpContext.Request?.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                string accessToken = await ExchangeToAzureDevOpsToken(aadAccessToken); Revision revision = await AzureDevOpsService.QueueBuild(project.AzureDevOps, request, accessToken);
                 if (revision != null)
                     return Ok(revision);
                 return StatusCode(500);
             }
 
             return new NotFoundObjectResult("CI/CD service not found");
+        }
+
+        private async Task<string> ExchangeToAzureDevOpsToken(string aadAccessToken)
+        {
+            // Exchange aadToken to Azure DevOps's access token
+            string resourceId = "499b84ac-1321-427f-aa17-267ca6975798";         // Azure DevOps resource Id
+            string username = User.FindFirst(ClaimTypes.Upn)?.Value;
+            string userAccessToken = aadAccessToken;
+            UserAssertion userAssertion = new UserAssertion(userAccessToken, "urn:ietf:params:oauth:grant-type:jwt-bearer", username);
+            ClientCredential clientCred = new ClientCredential(AzureAdConfig.ClientId, AzureAdConfig.ClientSecret);
+            string authority = $"{AzureAdConfig.Instance}{AzureAdConfig.TenantId}";
+            AuthenticationContext authContext = new AuthenticationContext(authority);
+            var result = await authContext.AcquireTokenAsync(resourceId, clientCred, userAssertion);
+            return result.AccessToken;
         }
     }
 }
