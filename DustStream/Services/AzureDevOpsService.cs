@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DustStream.Services
@@ -29,7 +28,7 @@ namespace DustStream.Services
         }
 
         public async Task<Revision> QueueBuild(AzureDevOpsSettings azureDevOps,
-            QueueAzureBuildRequest queueBuildRequest)
+            QueueBuildRequest queueBuildRequest, string accessToken)
         {
             Dictionary<string, string> parameters = queueBuildRequest.Variables.ToDictionary(v => v.Key, v => v.Value);
             TriggerBuildRequest request = new TriggerBuildRequest()
@@ -39,7 +38,7 @@ namespace DustStream.Services
             };
 
             string url = "build/builds?api-version=5.1";
-            HttpClient httpClient = GetHttpClient(azureDevOps, "", queueBuildRequest.AzurePat);
+            HttpClient httpClient = GetHttpClientAsync(azureDevOps, accessToken);
             var response = await httpClient.PostAsJsonAsync(url, request);
 
             if (response.IsSuccessStatusCode)
@@ -50,12 +49,11 @@ namespace DustStream.Services
             return null;
         }
 
-        private HttpClient GetHttpClient(AzureDevOpsSettings azureDevOps,
-            string username, string personalAccessToken)
+        private HttpClient GetHttpClientAsync(AzureDevOpsSettings azureDevOps, string accessToken)
         {
+            // Trigger Azure DevOps build
             HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
-                Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{personalAccessToken}")));
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             httpClient.BaseAddress = new Uri($"https://dev.azure.com/{azureDevOps.Organization}/{azureDevOps.Project}/_apis/");
             return httpClient;
         }

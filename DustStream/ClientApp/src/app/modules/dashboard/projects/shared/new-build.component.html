@@ -11,17 +11,6 @@
       <mat-label>Commit</mat-label>
       <input matInput formControlName="commit" placeholder="Commit to trigger" required>
     </mat-form-field>
-    <ng-container *ngIf="project?.azureDevOps">
-      <mat-form-field>
-        <mat-label>Azure Personal Access Token</mat-label>
-        <input matInput formControlName="azurePat" placeholder="Azure Personal Access Token" required>
-        <mat-hint>
-          Click this
-          <a target="_blank" href="https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate">link</a>
-          to see how to generate a Personl Access Token. It isn't stored and you won't be able to see it again.
-        </mat-hint>
-      </mat-form-field>
-    </ng-container>
     <section class="checkbox">
       <mat-checkbox (change)="showVariables($event)" [checked]="true">Use default variables</mat-checkbox>
     </section>

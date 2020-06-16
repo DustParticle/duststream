@@ -27,9 +27,6 @@ export class NewBuildComponent {
       branch: ['master', Validators.required],
       commit: ['HEAD', Validators.required]
     };
-    if (this.project.azureDevOps) {
-      controls.azurePat = ['', Validators.required];
-    }
     this.form = this.formBuilder.group(controls);
 
     this.variables = this.project.variables.slice();
@@ -41,11 +38,14 @@ export class NewBuildComponent {
     if (this.useDefaultVariables) {
       triggerBuildRequest.variables = this.project.variables.slice();
     }
-    this.revisionService.triggerBuild(this.project.name, triggerBuildRequest).subscribe(() => {
-      this.snackBar.open('Triggerred build successfully!', null, { duration: 1000 });
-    }, () => {
-      this.snackBar.open('Failed to trigger build!', null, { duration: 1000 });
-    });
+
+    if (this.project.azureDevOps) {
+      this.revisionService.triggerBuildOnAzure(this.project.name, triggerBuildRequest).subscribe(() => {
+        this.snackBar.open('Triggerred build successfully!', null, { duration: 1000 });
+      }, () => {
+        this.snackBar.open('Failed to trigger build!', null, { duration: 1000 });
+      });
+    }
 
     this.dialogRef.close();
   }
