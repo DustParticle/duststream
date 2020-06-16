@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { MsAdalAngular6Service } from 'microsoft-adal-angular6';
 import { SidebarService } from '../../../shared/services/sidebar.service';
 import { IProject } from '../models';
-import { ProjectService } from './project.service';
+import { ProjectService } from './services';
 
 /**
  * This is a part of the component FullLayoutComponent got from theme

@@ -28,7 +28,7 @@ namespace DustStream.Services
         public Task InsertOrReplaceAsync(string projectName, ProcedureExecution procedureExecution)
         {
             var tableStore = TableStorageHelper.GetProcedureExecutionTableStore(TableStorageConfig.ConnectionString, projectName);
-            return tableStore.InsertAsync(procedureExecution);
+            return tableStore.InsertOrReplaceAsync(procedureExecution);
         }
     }
 }

@@ -1,10 +1,10 @@
-import { Component, Inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component } from '@angular/core';
+import { MatDialog, MatTableDataSource } from '@angular/material';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IProcedure, IRevision } from '../models';
 import { IProject } from '../models/project.model';
-import { ProjectService } from './project.service';
-import { HttpClient } from '@angular/common/http';
-import { MatTableDataSource } from '@angular/material';
+import { ProcedureService, ProjectService, RevisionService } from './services';
+import { NewBuildComponent } from './shared/new-build.component';
 
 @Component({
   selector: 'project',
@@ -21,8 +21,9 @@ export class ProjectComponent {
   public executionStatus: string[][];
   public projectName: string;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, @Inject('BASE_URL') baseUrl: string,
-    private projectService: ProjectService) {
+  constructor(private route: ActivatedRoute, private router: Router,
+    private projectService: ProjectService, private revisionService: RevisionService,
+    private procedureService: ProcedureService, private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -34,7 +35,7 @@ export class ProjectComponent {
         this.project = project;
 
         // Get table content
-        this.http.get('/api/revisions/projects/' + this.projectName).subscribe((revisions: IRevision[]) => {
+        this.revisionService.getRevisionsByProject(this.projectName).subscribe((revisions: IRevision[]) => {
           this.revisions = revisions;
 
           // Sort revisions by Created Time, descending
@@ -44,7 +45,7 @@ export class ProjectComponent {
             return (left > right ? -1 : left < right ? 1 : 0);
           });
 
-          this.http.get('/api/procedures/projects/' + this.projectName).subscribe((procedures: IProcedure[]) => {
+          this.procedureService.getProceduresByProject(this.projectName).subscribe((procedures: IProcedure[]) => {
             this.procedures = procedures;
 
             // Sort procedures by Created Time, ascending
@@ -79,7 +80,7 @@ export class ProjectComponent {
   }
 
   getRevisionProcedureStatus(revision, procedure) {
-    this.http.get('/api/procedures/' + procedure + '/executions/projects/' + this.projectName + '/revisions/' + revision + '/status').subscribe((result: string) => {
+    this.procedureService.getProceduresStatusByRevision(this.projectName, revision, procedure).subscribe((result: string) => {
       this.executionStatus[revision][procedure] = result;
     });
   }
@@ -87,5 +88,16 @@ export class ProjectComponent {
   getCommitPayload(commitPayload: string) {
     let obj = JSON.parse(commitPayload);
     return `Repository: ${obj.repositoryName}\nAuthor: ${obj.author}\nMessage: ${obj.message}`;
+  }
+
+  goToSettings(): void {
+    this.router.navigate(['/projects/settings/' + this.project.name]);
+  }
+
+  goToTriggerNewBuild(): void {
+    const dialogRef = this.dialog.open(NewBuildComponent, {
+      width: '600px',
+      data: this.project
+    });
   }
 }

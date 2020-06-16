@@ -15,6 +15,26 @@
     white-space: nowrap;
   }
 
+  .statusFailed {
+    background-color: red;
+  }
+
+  .statusInProgress {
+    background-color: darkgrey;
+  }
+
+  .statusInQueue {
+    background-color: white;
+  }
+
+  .statusSuccess {
+    background-color: lawngreen;
+  }
+
+  .statusNoStatus {
+    background-color: transparent;
+  }
+
   .status-cell {
     height: 1px;
 
@@ -28,4 +48,3 @@
     }
   }
 }
-

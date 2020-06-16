@@ -17,7 +17,7 @@ namespace DustStream.Controllers
     public class ProjectsController : Controller
     {
         private readonly TableStorageOptions TableStorageConfig;
-        private IProjectDataService ProjectDataService;
+        private readonly IProjectDataService ProjectDataService;
 
         public ProjectsController(IOptions<TableStorageOptions> TableStorageConfig, IProjectDataService projectDataService)
         {
@@ -50,16 +50,12 @@ namespace DustStream.Controllers
                 return Conflict(new { message = $"The project '{request.Name}' is already existed." });
             }
 
-            project = new Project()
-            {
-                DomainString = TableStorageConfig.DomainString,
-                Name = request.Name,
-                Description = request.Description,
-            };
-            UpdateApiKey(in project);
-            await ProjectDataService.InsertAsync(project);
+            request.DomainString = TableStorageConfig.DomainString;
+            request.Timestamp = DateTime.Now;
+            UpdateApiKey(in request);
+            await ProjectDataService.InsertAsync(request);
 
-            return Ok(project);
+            return Ok(request);
         }
 
         // TODO: support admin privilege
@@ -75,6 +71,23 @@ namespace DustStream.Controllers
 
             UpdateApiKey(in project);
             await ProjectDataService.UpdateAsync(project);
+
+            return Ok(project);
+        }
+
+        [Authorize]
+        [HttpPut("{projectName}/updateCiService")]
+        public async Task<IActionResult> UpdateCiService([FromRoute] string projectName, [FromBody] Project request)
+        {
+            Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, projectName);
+            if (null == project)
+            {
+                return NotFound();
+            }
+
+            project.AzureDevOps = request.AzureDevOps;
+            project.Variables = request.Variables;
+            await ProjectDataService.ReplaceAsync(project);
 
             return Ok(project);
         }

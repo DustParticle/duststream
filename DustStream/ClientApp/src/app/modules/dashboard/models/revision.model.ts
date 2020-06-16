@@ -1,3 +1,5 @@
+import { IVariable } from "./project.model";
+
 export interface IRevision {
   projectName: string;
   revisionNumber: string;
@@ -13,4 +15,12 @@ export interface IRevision {
   releaseDataLink?: string;
 
   [key: string]: any;
+}
+
+export interface ITriggerBuildRequest {
+  branch: string;
+  commit: string;
+  variables: IVariable[];
+
+  azurePat?: string;
 }

@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace DustStream.Extensions
@@ -15,7 +17,7 @@ namespace DustStream.Extensions
     {
         private const string ApiKeyHeaderName = "X-Api-Key";
         public string RouteName { get; set; }
-        
+
         public ApiKeyAuthorize(string routeName)
         {
             this.RouteName = routeName;
@@ -40,7 +42,9 @@ namespace DustStream.Extensions
             var projectDataService = context.HttpContext.RequestServices.GetService<IProjectDataService>();
             var tableStorageConfig = context.HttpContext.RequestServices.GetService<IOptions<TableStorageOptions>>();
             var project = await projectDataService.GetAsync(tableStorageConfig.Value.DomainString, projectName);
-            if (project == null || !apiKeyInRequest.Equals(project.ApiKey))
+            MD5 md5 = MD5.Create();
+            var hashedApiKeyInRequest = Encoding.UTF8.GetString(md5.ComputeHash(Encoding.UTF8.GetBytes(apiKeyInRequest)));
+            if (project == null || !hashedApiKeyInRequest.Equals(project.HashedApiKey))
             {
                 context.Result = new UnauthorizedResult();
                 return;
