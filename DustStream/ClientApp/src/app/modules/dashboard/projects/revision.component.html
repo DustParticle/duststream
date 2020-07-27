@@ -43,6 +43,35 @@
         </mat-icon>{{ revisionCommitPayload.message }}
       </mat-label>
     </div>
+    <button mat-icon-button type="button" [disabled]="'Success' === revisionInfo.releaseStatus || 'InProgress' === revisionInfo.releaseStatus" (click)="goToCreateRelease()">
+      <mat-icon>new_releases</mat-icon>Create Release
+    </button>
+    <table *ngIf="'InProgress' === revisionInfo.releaseStatus || true === isCreatingRelease" class="session-detail">
+      <tr>
+        <td>
+          <b>Creating Release {{revisionInfo.releaseLabel}} - Please wait ...</b>
+        </td>
+      </tr>
+    </table>
+    <table *ngIf="'Success' === revisionInfo.releaseStatus" class="session-detail">
+      <tr>
+        <td>
+          <b>Release Name: {{revisionInfo.releaseLabel}}</b><br />
+          <a *ngIf="revisionInfo.releaseDataLink" [href]="revisionInfo.releaseDataLink">{{revisionInfo.releaseDataLink}}</a><br />
+          <br />
+          <b>Release Notes</b><br />
+          <textarea [disabled]="1">{{revisionInfo.releaseNotes}}</textarea><br />
+        </td>
+      </tr>
+    </table>
+    <table *ngIf="'Error' === revisionInfo.releaseStatus" class="session-detail">
+      <tr class="statusFailed">
+        <td>
+          Cannot create release {{revisionInfo.releaseLabel}}<br />
+          Error: {{revisionInfo.releaseDataLink}}<br />
+        </td>
+      </tr>
+    </table>
   </div>
 </div>
 

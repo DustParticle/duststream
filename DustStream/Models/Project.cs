@@ -8,6 +8,8 @@ namespace DustStream.Models
         public string Organization { get; set; }
         public string Project { get; set; }
         public string BuildDefinition { get; set; }
+        public string ReleaseDefinition { get; set; }
+        public string ArtifactResourcePipeline { get; set; }
     }
 
     public class Variable

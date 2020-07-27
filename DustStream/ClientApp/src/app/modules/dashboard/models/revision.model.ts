@@ -22,3 +22,8 @@ export interface ITriggerBuildRequest {
   commit: string;
   variables: IVariable[];
 }
+
+export interface ICreateReleaseRequest {
+  name: string;
+  releaseNotes: string;
+}

@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Create Release Candidate</h2>
+
+<mat-dialog-content class="mat-typography">
+  <form *ngIf="project && form" [formGroup]="form" class="create-release-form"
+        fxLayout="column wrap" fxLayoutAlign="start start" fxLayoutGap="10px">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" placeholder="Name of the release" required>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Release Notes</mat-label>
+      <textarea matInput formControlName="releaseNotes"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="center">
+  <button mat-raised-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="!form?.valid" (click)="create()">Create</button>
+</mat-dialog-actions>
+

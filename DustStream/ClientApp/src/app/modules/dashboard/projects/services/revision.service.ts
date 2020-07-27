@@ -19,4 +19,8 @@ export class RevisionService {
   public triggerBuildOnAzure(projectName: string, triggerBuildRequest: ITriggerBuildRequest): Observable<IRevision> {
     return <Observable<IRevision>>this.http.post(`/api/revisions/projects/${projectName}/trigger/azure`, triggerBuildRequest);
   }
+
+  public createRelease(projectName: string, revisionNumber: string, releaseInfo: any): Observable<IRevision> {
+    return <Observable<IRevision>>this.http.post(`/api/revisions/${revisionNumber}/projects/${projectName}/createRelease`, releaseInfo);
+  }
 }

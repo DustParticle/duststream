@@ -2,6 +2,8 @@ export interface IAzureDevOpsSettings {
   organization: string;
   project: string;
   buildDefinition: string;
+  releaseDefinition: string;
+  artifactResourcePipeline: string;
 }
 
 export interface IVariable {

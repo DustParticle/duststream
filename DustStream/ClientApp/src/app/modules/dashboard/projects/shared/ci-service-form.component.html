@@ -20,6 +20,14 @@
       <mat-label>Build Definition</mat-label>
       <input matInput formControlName="buildDefinition" placeholder="Azure Build Definition" required>
     </mat-form-field>
+    <mat-form-field>
+      <mat-label>Release Definition</mat-label>
+      <input matInput formControlName="releaseDefinition" placeholder="Azure Release Definition ID" required>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Artifact Resource</mat-label>
+      <input matInput formControlName="artifactResourcePipeline" placeholder="Pipeline contains published artifacts" required>
+    </mat-form-field>
   </ng-container>
   <variables [variables]="project.variables" [form]="form"></variables>
 </form>

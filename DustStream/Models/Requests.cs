@@ -6,4 +6,10 @@
         public string Commit { get; set; }
         public Variable[] Variables { get; set; }
     }
+
+    public class QueueReleaseRequest
+    {
+        public string Name { get; set; }
+        public string ReleaseNotes { get; set; }
+    }
 }

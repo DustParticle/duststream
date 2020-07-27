@@ -1,4 +1,5 @@
-﻿using DustStream.Interfaces;
+﻿using DustStream.Extensions;
+using DustStream.Interfaces;
 using DustStream.Models;
 using DustStream.Options;
 using Microsoft.AspNetCore.Authorization;
@@ -12,9 +13,15 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace DustStream.Controllers
 {
+    public class ReleaseStatusRequest
+    {
+        public string DataLink { get; set; }
+    }
+
     [Route("api/[controller]")]
     public class RevisionsController : Controller
     {
@@ -82,6 +89,69 @@ namespace DustStream.Controllers
             AuthenticationContext authContext = new AuthenticationContext(authority);
             var result = await authContext.AcquireTokenAsync(resourceId, clientCred, userAssertion);
             return result.AccessToken;
+        }
+
+        [Authorize]
+        [HttpPost("{revisionNumber}/projects/{projectName}/createRelease")]
+        public async Task<IActionResult> CreateRelease([FromRoute] string revisionNumber, [FromRoute] string projectName, [FromBody] QueueReleaseRequest request)
+        {
+            Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, projectName);
+            if (null == project)
+            {
+                return new NotFoundObjectResult("Project not found");
+            }
+
+            Revision revision = await RevisionDataService.GetAsync(projectName, revisionNumber);
+            if (revision == null)
+            {
+                return new NotFoundObjectResult("Revision not found");
+            } else
+            {
+                if (project.AzureDevOps != null)
+                {
+                    dynamic desObject = JsonConvert.DeserializeObject<dynamic>(revision.CommitPayload);
+                    string commitNumber = Convert.ToString(desObject.commit);
+
+                    string aadAccessToken = this.HttpContext.Request?.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                    string accessToken = await ExchangeToAzureDevOpsToken(aadAccessToken); Revision returnRevision = await AzureDevOpsService.QueueRelease(project.AzureDevOps, request, accessToken, revisionNumber, commitNumber);
+                    if (returnRevision != null)
+                    {
+                        revision.ReleaseStatus = "InProgress";
+                        revision.ReleaseLabel = request.Name;
+                        revision.ReleaseNotes = request.ReleaseNotes;
+                        await RevisionDataService.InsertOrReplaceAsync(revision);
+
+                        return Ok(returnRevision);
+                    }
+                    return StatusCode(500);
+                }
+            }
+            return Ok(revision);
+        }
+
+        [ApiKeyAuthorize("projectName")]
+        [HttpPost("{revisionNumber}/executions/projects/{projectName}/status/{status}")]
+        public async Task<IActionResult> UpdateReleaseStatus([FromRoute] string revisionNumber, [FromRoute] string projectName,
+            [FromRoute] string status, [FromBody] ReleaseStatusRequest releaseStatus)
+        {
+            Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, projectName);
+            if (project == null)
+            {
+                return new NotFoundObjectResult("Project not found");
+            }
+
+            Revision revision = await RevisionDataService.GetAsync(projectName, revisionNumber);
+            if (revision == null)
+            {
+                return new NotFoundObjectResult("Revision not found");
+            } else
+            {
+                revision.ReleaseStatus = status;
+                revision.ReleaseDataLink = releaseStatus.DataLink;
+                await RevisionDataService.InsertOrReplaceAsync(revision);
+            }
+
+            return Ok(revision);
         }
     }
 }
