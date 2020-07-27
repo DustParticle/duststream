@@ -33,7 +33,7 @@ export class CreateReleaseComponent {
   create(): void {
     let createReleaseRequest: ICreateReleaseRequest = this.form.value;
 
-    if (this.project.azureDevOps) {
+    if (this.project.azureDevOps && this.project.azureDevOps.buildDefinition && this.project.azureDevOps.artifactResourcePipeline) {
       this.revisionService.createRelease(this.project.name, this.revision.revisionNumber, createReleaseRequest).subscribe(() => {
         this.snackBar.open('Creating release ...', null, { duration: 1000 });
       }, () => {
