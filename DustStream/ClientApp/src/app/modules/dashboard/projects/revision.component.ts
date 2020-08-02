@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IProcedure, IRevision } from '../models';
+import { IProcedure, IRevision, IRelease } from '../models';
 import { IProject } from '../models/project.model';
-import { ProcedureService, ProjectService, RevisionService } from './services';
+import { ProcedureService, ProjectService, RevisionService, ReleaseService } from './services';
 import { MatDialog, MatTableDataSource } from '@angular/material';
 import { CreateReleaseComponent } from './shared/create-release.component';
 
@@ -13,6 +13,7 @@ import { CreateReleaseComponent } from './shared/create-release.component';
 })
 export class RevisionComponent {
   public revisionInfo: IRevision;
+  public releaseInfo: IRelease;
   public procedures: IProcedure[];
   private projectName: string;
   private revisionNumber: string;
@@ -25,7 +26,7 @@ export class RevisionComponent {
 
   constructor(private route: ActivatedRoute,
     private revisionService: RevisionService, private procedureService: ProcedureService,
-    private projectService: ProjectService, private dialog: MatDialog) {
+    private projectService: ProjectService, private releaseService: ReleaseService, private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -50,6 +51,11 @@ export class RevisionComponent {
           if (0 !== Object.keys(revisionInfo).length) {
             this.revisionCommitPayload = JSON.parse(this.revisionInfo.commitPayload);
           }
+        });
+
+        // Get release info
+        this.releaseService.getReleaseByProject(this.projectName, this.revisionNumber).subscribe((releaseInfo: IRelease) => {
+          this.releaseInfo = releaseInfo;
         });
 
         this.procedureService.getProceduresByProject(this.revisionInfo.projectName).subscribe((result: IProcedure[]) => {
@@ -81,10 +87,10 @@ export class RevisionComponent {
   goToCreateRelease(): void {
     const dialogRef = this.dialog.open(CreateReleaseComponent, {
       width: '600px',
-      data: { projectData: this.project, revisionData: this.revisionInfo }
+      data: { projectData: this.project, revisionData: this.revisionInfo, releaseData: this.releaseInfo }
     });
     dialogRef.afterClosed().subscribe(() => {
-      this.isCreatingRelease = true;
+      // this.isCreatingRelease = true;
     });
   }
 }

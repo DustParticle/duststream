@@ -9,11 +9,6 @@ export interface IRevision {
   commitPayload?: string;
   description?: string;
 
-  releaseStatus?: string;
-  releaseLabel?: string;
-  releaseNotes?: string;
-  releaseDataLink?: string;
-
   [key: string]: any;
 }
 
@@ -21,9 +16,4 @@ export interface ITriggerBuildRequest {
   branch: string;
   commit: string;
   variables: IVariable[];
-}
-
-export interface ICreateReleaseRequest {
-  name: string;
-  releaseNotes: string;
 }

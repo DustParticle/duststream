@@ -7,6 +7,7 @@ namespace DustStream.Services
     {
         private static readonly string ProjectTable = "Projects";
         private static readonly string RevisionTable = "Revisions";
+        private static readonly string ReleaseTable = "Releases";
         private static readonly string ProcedureTable = "Procedures";
         private static readonly string ProcedureExecutionTableSuffix = "ProcedureExecutions";
 
@@ -19,6 +20,12 @@ namespace DustStream.Services
         public static PocoTableStore<Revision, string, string> GetRevisionTableStore(string connectionString)
         {
             return new PocoTableStore<Revision, string, string>(RevisionTable, connectionString,
+                r => r.ProjectName, r => r.RevisionNumber);
+        }
+
+        public static PocoTableStore<Release, string, string> GetReleaseTableStore(string connectionString)
+        {
+            return new PocoTableStore<Release, string, string>(ReleaseTable, connectionString,
                 r => r.ProjectName, r => r.RevisionNumber);
         }
 

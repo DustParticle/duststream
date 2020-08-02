@@ -59,8 +59,8 @@ namespace DustStream.Services
             return httpClient;
         }
 
-        public async Task<Revision> QueueRelease(AzureDevOpsSettings azureDevOps,
-            QueueReleaseRequest queueReleaseRequest, string accessToken, string revisionNumber, string commitNumber)
+        public async Task<Release> QueueRelease(AzureDevOpsSettings azureDevOps,
+            QueueReleaseRequest queueReleaseRequest, string accessToken, string projectName,string revisionNumber, string commitNumber)
         {
             Dictionary<string, string> parameters = new Dictionary<string, string>()
             {
@@ -82,8 +82,13 @@ namespace DustStream.Services
 
             if (response.IsSuccessStatusCode)
             {
-                // TODO: parse response to create the Revision object
-                return new Revision();
+                Release returnRelease = new Release();
+                returnRelease.Status = "InProgress";
+                returnRelease.ProjectName = projectName;
+                returnRelease.RevisionNumber = revisionNumber;
+                returnRelease.ReleaseLabel = queueReleaseRequest.Name;
+                returnRelease.ReleaseNotes = queueReleaseRequest.ReleaseNotes;
+                return returnRelease;
             }
             return null;
         }

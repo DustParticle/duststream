@@ -40,6 +40,7 @@ namespace DustStream
 
             services.AddSingleton<IProjectDataService, ProjectDataService>();
             services.AddSingleton<IRevisionDataService, RevisionDataService>();
+            services.AddSingleton<IReleaseDataService, ReleaseDataService>();
             services.AddSingleton<IProcedureDataService, ProcedureDataService>();
             services.AddSingleton<IProcedureExecutionDataService, ProcedureExecutionDataService>();
             services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
