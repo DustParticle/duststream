@@ -11,8 +11,9 @@ import { ProjectSettingsComponent } from './project-settings.component';
 import { ProjectComponent } from './project.component';
 import { ProjectsComponent } from './projects.component';
 import { RevisionComponent } from './revision.component';
-import { ProcedureService, ProjectService, RevisionService } from './services';
+import { ProcedureService, ProjectService, RevisionService, ReleaseService } from './services';
 import { CiServiceFormComponent } from './shared/ci-service-form.component';
+import { CreateReleaseComponent } from './shared/create-release.component';
 import { NewBuildComponent } from './shared/new-build.component';
 import { VariablesComponent } from './shared/variables.component';
 import { StatusPipe } from './status.pipe';
@@ -48,6 +49,7 @@ import { StatusPipe } from './status.pipe';
     StatusPipe,
     CiServiceFormComponent,
     VariablesComponent,
+    CreateReleaseComponent,
     NewBuildComponent,
     ProjectComponent,
     ProjectsComponent,
@@ -59,9 +61,11 @@ import { StatusPipe } from './status.pipe';
   providers: [
     ProjectService,
     RevisionService,
-    ProcedureService
+    ProcedureService,
+    ReleaseService
   ],
   entryComponents: [
+    CreateReleaseComponent,
     NewBuildComponent
   ]
 })

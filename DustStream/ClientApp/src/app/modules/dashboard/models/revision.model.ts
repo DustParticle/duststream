@@ -9,11 +9,6 @@ export interface IRevision {
   commitPayload?: string;
   description?: string;
 
-  releaseStatus?: string;
-  releaseLabel?: string;
-  releaseNotes?: string;
-  releaseDataLink?: string;
-
   [key: string]: any;
 }
 

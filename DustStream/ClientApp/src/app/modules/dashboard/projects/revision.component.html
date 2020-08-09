@@ -44,22 +44,55 @@
       </mat-label>
     </div>
   </div>
-</div>
 
-<br />
-<mat-divider></mat-divider>
-<br />
+  <button mat-icon-button type="button" (click)="goToCreateRelease()">
+    <mat-icon>new_releases</mat-icon>Create Release
+  </button>
 
-<div *ngIf="procedures">
-  <mat-tab-group dynamicHeight>
-    <mat-tab *ngFor="let procedure of procedures">
-      <ng-template mat-tab-label>
-        <h4 class="{{ executionStatus[procedure.shortName] | status }}">{{ procedure.shortName }}</h4>
-      </ng-template>
-      <procedure-execution [projectName]="revisionInfo.projectName"
-                           [revisionNumber]="revisionInfo.revisionNumber"
-                           [procedureShortName]="procedure.shortName">
-      </procedure-execution>
-    </mat-tab>
-  </mat-tab-group>
+  <div *ngIf="releaseInfo">
+    <table *ngIf="'InProgress' === releaseInfo.status || true === isCreatingRelease" class="session-detail">
+      <tr>
+        <td>
+          <b>Creating Release {{releaseInfo.releaseLabel}} - Please wait ...</b>
+        </td>
+      </tr>
+    </table>
+    <table *ngIf="'Success' === releaseInfo.status" class="session-detail">
+      <tr>
+        <td>
+          <b>Release Name: {{releaseInfo.releaseLabel}}</b><br />
+          <a *ngIf="releaseInfo.releaseDataLink" [href]="releaseInfo.releaseDataLink">{{releaseInfo.releaseDataLink}}</a><br />
+          <br />
+          <b>Release Notes</b><br />
+          <textarea [disabled]="1">{{releaseInfo.releaseNotes}}</textarea><br />
+        </td>
+      </tr>
+    </table>
+    <table *ngIf="'Error' === releaseInfo.status" class="session-detail">
+      <tr class="statusFailed">
+        <td>
+          Cannot create release {{releaseInfo.releaseLabel}}<br />
+          Error: {{releaseInfo.releaseDataLink}}<br />
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <br />
+  <mat-divider></mat-divider>
+  <br />
+
+  <div *ngIf="procedures">
+    <mat-tab-group dynamicHeight>
+      <mat-tab *ngFor="let procedure of procedures">
+        <ng-template mat-tab-label>
+          <h4 class="{{ executionStatus[procedure.shortName] | status }}">{{ procedure.shortName }}</h4>
+        </ng-template>
+        <procedure-execution [projectName]="revisionInfo.projectName"
+                             [revisionNumber]="revisionInfo.revisionNumber"
+                             [procedureShortName]="procedure.shortName">
+        </procedure-execution>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
 </div>

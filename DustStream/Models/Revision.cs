@@ -29,10 +29,5 @@ namespace DustStream.Models
         public DateTimeOffset CreatedTime { get; set; }
         public DateTimeOffset Timestamp { get; set; }
         public string Description { get; set; }
-
-        public string ReleaseStatus { get; set; }
-        public string ReleaseLabel { get; set; }
-        public string ReleaseNotes { get; set; }
-        public string ReleaseDataLink { get; set; }
     }
 }

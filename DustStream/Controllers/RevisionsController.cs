@@ -1,4 +1,5 @@
-﻿using DustStream.Interfaces;
+﻿using DustStream.Extensions;
+using DustStream.Interfaces;
 using DustStream.Models;
 using DustStream.Options;
 using Microsoft.AspNetCore.Authorization;

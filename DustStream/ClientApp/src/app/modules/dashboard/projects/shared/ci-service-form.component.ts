@@ -16,7 +16,7 @@ export class CiServiceFormComponent {
   currentGroupName: string = '';
 
   constructor() {
-    this.groupNames.set('azureDevOps', ['organization', 'project', 'buildDefinition']);
+    this.groupNames.set('azureDevOps', ['organization', 'project', 'buildDefinition', 'releaseDefinition', 'artifactResourcePipeline']);
   }
 
   ngOnInit(): void {
