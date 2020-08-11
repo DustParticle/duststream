@@ -14,13 +14,13 @@ jobs:
       definition: '$(DUSTPARTICLE_PIPELINE)'
       buildVersionToDownload: 'specific'
       pipelineId: '$(DUSTPARTICLE_BUILDID)'
-      targetPath: '$(Pipeline.Workspace)'
+      targetPath: '$(Build.ArtifactStagingDirectory)'
   - task: ArchiveFiles@2
     inputs:
-      rootFolderOrFile: '$(Pipeline.Workspace)'
+      rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
       includeRootFolder: true
       archiveType: 'zip'
-      archiveFile: '$(Pipeline.Workspace)/$(DUSTPARTICLE_BUILDID)-$(DUSTPARTICLE_RELEASETAG).zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/$(DUSTPARTICLE_BUILDID)-$(DUSTPARTICLE_RELEASETAG).zip'
       replaceExistingArchive: true
   - task: GitHubRelease@1
     inputs:
@@ -30,7 +30,7 @@ jobs:
       target: '$(DUSTPARTICLE_SOURCEVERSION)'
       tagSource: 'userSpecifiedTag'
       tag: '$(DUSTPARTICLE_RELEASETAG)'
-      assets: '$(Pipeline.Workspace)/$(DUSTPARTICLE_BUILDID)-$(DUSTPARTICLE_RELEASETAG).zip'
+      assets: '$(Build.ArtifactStagingDirectory)/$(DUSTPARTICLE_BUILDID)-$(DUSTPARTICLE_RELEASETAG).zip'
       addChangeLog: false
   - template: updateRevisionStatus.yml
     parameters:
