@@ -10,7 +10,16 @@ export class CachingInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     if (!this.isCachable(req)) {
-      return next.handle(req);
+      return next.handle(req).pipe(
+        tap(event => {
+          if (event instanceof HttpResponse) {
+            if (event.status === 200) {
+              // Data is changed, clear cache
+              this.cache.clear();
+            }
+          }
+        })
+      );
     }
 
     const cachedResponse = this.cache.get(req);

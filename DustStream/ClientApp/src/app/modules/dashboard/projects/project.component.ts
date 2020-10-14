@@ -29,52 +29,60 @@ export class ProjectComponent {
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       this.projectName = params['projectName'];
-
       // Get title and component info
       this.projectService.getProject(this.projectName).subscribe((project: IProject) => {
         this.project = project;
+        this.reloadRevisions();
+      });
+    });
 
-        // Get table content
-        this.revisionService.getRevisionsByProject(this.projectName).subscribe((revisions: IRevision[]) => {
-          this.revisions = revisions;
+    this.revisionService.newBuildTriggered.subscribe(() => this.reloadRevisions());
+  }
 
-          // Sort revisions by Created Time, descending
-          this.revisions.sort(function (a, b) {
-            let left = a.createdTime;
-            let right = b.createdTime;
-            return (left > right ? -1 : left < right ? 1 : 0);
-          });
+  reloadRevisions(): void {
+    // Get table content
+    this.revisionService.getRevisionsByProject(this.projectName).subscribe((revisions: IRevision[]) => {
+      this.revisions = revisions;
 
-          this.procedureService.getProceduresByProject(this.projectName).subscribe((procedures: IProcedure[]) => {
-            this.procedures = procedures;
+      // Sort revisions by Created Time, descending
+      this.revisions.sort(function (a, b) {
+        let left = a.createdTime;
+        let right = b.createdTime;
+        return (left > right ? -1 : left < right ? 1 : 0);
+      });
 
-            // Sort procedures by Created Time, ascending
-            this.procedures.sort(function (a, b) {
-              let left = a.createdTime;
-              let right = b.createdTime;
-              return (left > right ? 1 : left < right ? -1 : 0);
-            });
+      this.procedureService.getProceduresByProject(this.projectName).subscribe((procedures: IProcedure[]) => {
+        this.procedures = procedures;
 
-            this.displayedColumns = ['createdTime', 'revisionNumber'];
-            for (var i: number = 0; i < this.procedures.length; ++i) {
-              this.displayedColumns.push(this.procedures[i].shortName);
-            }
-            this.displayedColumns.push('spacing');
-
-            this.executionStatus = [];
-            for (var i: number = 0; i < this.revisions.length; ++i) {
-              var revision = this.revisions[i].revisionNumber;
-              this.executionStatus[revision] = [];
-              for (var j: number = 0; j < this.procedures.length; ++j) {
-                var procedure = this.procedures[j].shortName;
-                this.revisions[i][procedure] = procedure;
-                this.getRevisionProcedureStatus(revision, procedure);
-              }
-              this.revisions[i]['spacing'] = '';
-            }
-            this.revisionsDataSource = new MatTableDataSource(this.revisions);
-          });
+        // Sort procedures by Created Time, ascending
+        this.procedures.sort(function (a, b) {
+          let left = a.createdTime;
+          let right = b.createdTime;
+          return (left > right ? 1 : left < right ? -1 : 0);
         });
+
+        this.displayedColumns = ['createdTime', 'revisionNumber', 'requestor'];
+        for (var i: number = 0; i < this.procedures.length; ++i) {
+          this.displayedColumns.push(this.procedures[i].shortName);
+        }
+        this.displayedColumns.push('spacing');
+
+        this.executionStatus = [];
+        for (var i: number = 0; i < this.revisions.length; ++i) {
+          var revision = this.revisions[i].revisionNumber;
+          this.executionStatus[revision] = [];
+          for (var j: number = 0; j < this.procedures.length; ++j) {
+            var procedure = this.procedures[j].shortName;
+            this.revisions[i][procedure] = procedure;
+            this.getRevisionProcedureStatus(revision, procedure);
+          }
+
+          if (!this.revisions[i].requestor) {
+            this.revisions[i].requestor = '';
+          }
+          this.revisions[i]['spacing'] = '';
+        }
+        this.revisionsDataSource = new MatTableDataSource(this.revisions);
       });
     });
   }
@@ -87,6 +95,9 @@ export class ProjectComponent {
 
   getCommitPayload(commitPayload: string) {
     let obj = JSON.parse(commitPayload);
+    if (obj == null) {
+      return '';
+    }
     return `Repository: ${obj.repositoryName}\nAuthor: ${obj.author}\nMessage: ${obj.message}`;
   }
 
