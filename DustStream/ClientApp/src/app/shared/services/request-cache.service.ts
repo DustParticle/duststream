@@ -36,4 +36,8 @@ export class RequestCacheService {
       }
     });
   }
+
+  clear(): void {
+    this.cache.clear();
+  }
 }

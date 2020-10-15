@@ -1,9 +1,11 @@
 using DustStream.Interfaces;
 using DustStream.Models;
+using Microsoft.VisualStudio.Services.OAuth;
+using Microsoft.VisualStudio.Services.WebApi;
+using Microsoft.TeamFoundation.Build.WebApi;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -31,23 +33,36 @@ namespace DustStream.Services
         public async Task<Revision> QueueBuild(AzureDevOpsSettings azureDevOps,
             QueueBuildRequest queueBuildRequest, string accessToken)
         {
-            Dictionary<string, string> parameters = queueBuildRequest.Variables.ToDictionary(v => v.Key, v => v.Value);
-            TriggerBuildRequest request = new TriggerBuildRequest()
+            var credentials = new VssOAuthAccessTokenCredential(accessToken);
+            var connection = new VssConnection(
+                new Uri($"https://dev.azure.com/{azureDevOps.Organization}"),
+                credentials);
+            try
             {
-                Parameters = JsonConvert.SerializeObject(parameters),
-                Definition = new BuildDefinition() { Id = azureDevOps.BuildDefinition }
-            };
+                var buildClient = connection.GetClient<BuildHttpClient>();
+                var definition = await buildClient.GetDefinitionAsync(azureDevOps.Project, int.Parse(azureDevOps.BuildDefinition));
+                Dictionary<string, string> parameters = queueBuildRequest.Variables.ToDictionary(v => v.Key, v => v.Value);
+                Build build = new Build
+                {
+                    Definition = definition,
+                    Project = definition.Project,
+                    Parameters = JsonConvert.SerializeObject(parameters)
+                };
+                var response = await buildClient.QueueBuildAsync(build);
 
-            string url = "build/builds?api-version=5.1";
-            HttpClient httpClient = GetHttpClientAsync(azureDevOps, accessToken);
-            var response = await httpClient.PostAsJsonAsync(url, request);
-
-            if (response.IsSuccessStatusCode)
-            {
-                // TODO: parse response to create the Revision object
-                return new Revision();
+                var revision = new Revision()
+                {
+                    RevisionNumber = response.Id.ToString(),
+                    Requestor = response.RequestedBy.DisplayName,
+                    CreatedTime = DateTimeOffset.Now
+                };
+                
+                return revision;
             }
-            return null;
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private HttpClient GetHttpClientAsync(AzureDevOpsSettings azureDevOps, string accessToken)

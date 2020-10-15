@@ -29,5 +29,6 @@ namespace DustStream.Models
         public DateTimeOffset CreatedTime { get; set; }
         public DateTimeOffset Timestamp { get; set; }
         public string Description { get; set; }
+        public string Requestor { get; set; }
     }
 }

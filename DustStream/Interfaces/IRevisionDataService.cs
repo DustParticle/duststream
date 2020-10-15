@@ -9,5 +9,6 @@ namespace DustStream.Interfaces
         public Task<IEnumerable<Revision>> GetAllByProjectAsync(string projectName);
         public Task<Revision> GetAsync(string projectName, string revisionNumber);
         public Task InsertAsync(Revision revision);
+        public Task UpdateAsync(Revision revision);
     }
 }

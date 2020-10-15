@@ -108,11 +108,21 @@ namespace DustStream.Controllers
             Revision revision = await RevisionDataService.GetAsync(projectName, revisionNumber);
             if (revision == null)
             {
-                revision = new Revision(projectName, revisionNumber, jobStatus.CommitSet, JsonSerializer.Serialize(jobStatus.Commit))
+                revision = new Revision()
                 {
+                    ProjectName = projectName,
+                    RevisionNumber = revisionNumber,
+                    Requestor = "",
+                    CommitSet = jobStatus.CommitSet,
+                    CommitPayload = JsonSerializer.Serialize(jobStatus.Commit),
                     CreatedTime = DateTimeOffset.Now
                 };
                 await RevisionDataService.InsertAsync(revision);
+            }
+            else
+            {
+                revision.CommitPayload = JsonSerializer.Serialize(jobStatus.Commit);
+                await RevisionDataService.UpdateAsync(revision);
             }
 
             Procedure procedure = await ProcedureDataService.GetAsync(projectName, procedureName);

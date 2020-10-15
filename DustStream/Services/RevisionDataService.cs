@@ -33,5 +33,11 @@ namespace DustStream.Services
             var tableStore = TableStorageHelper.GetRevisionTableStore(TableStorageConfig.ConnectionString);
             return tableStore.InsertAsync(revision);
         }
+
+        public Task UpdateAsync(Revision revision)
+        {
+            var tableStore = TableStorageHelper.GetRevisionTableStore(TableStorageConfig.ConnectionString);
+            return tableStore.UpdateAsync(revision);
+        }
     }
 }

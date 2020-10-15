@@ -8,6 +8,7 @@ export interface IRevision {
   commitSet?: string;
   commitPayload?: string;
   description?: string;
+  requestor?: string;
 
   [key: string]: any;
 }

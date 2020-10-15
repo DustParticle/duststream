@@ -62,10 +62,16 @@ namespace DustStream.Controllers
             if (project.AzureDevOps != null)
             {
                 string aadAccessToken = this.HttpContext.Request?.Headers["Authorization"].ToString().Replace("Bearer ", "");
-                string accessToken = await ExchangeToAzureDevOpsToken(aadAccessToken); Revision revision = await AzureDevOpsService.QueueBuild(project.AzureDevOps, request, accessToken);
-                if (revision != null)
-                    return Ok(revision);
-                return StatusCode(500);
+                string accessToken = await ExchangeToAzureDevOpsToken(aadAccessToken);
+                Revision revision = await AzureDevOpsService.QueueBuild(project.AzureDevOps, request, accessToken);
+                if (revision == null)
+                {
+                    return StatusCode(500);
+                }
+
+                revision.ProjectName = projectName;
+                await RevisionDataService.InsertAsync(revision);
+                return Ok(revision);
             }
 
             return new NotFoundObjectResult("CI/CD service not found");
