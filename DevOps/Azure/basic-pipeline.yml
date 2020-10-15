@@ -30,18 +30,6 @@ stages:
       inputs:
         restoreSolution: '$(solution)'
 
-    - task: replacetokens@3
-      inputs:
-        targetFiles: '**/*.json'
-        encoding: 'auto'
-        writeBOM: true
-        actionOnMissing: 'warn'
-        keepToken: false
-        tokenPrefix: '#{'
-        tokenSuffix: '}#'
-        useLegacyPattern: false
-        enableTelemetry: true
-
     - task: DotNetCoreCLI@2
       inputs:
         command: 'publish'
@@ -77,6 +65,15 @@ stages:
       inputs:
         artifactName: 'DustStream'
         path: '$(System.DefaultWorkingDirectory)'
+    
+    - task: TokenizeInArchiveTask@1
+      inputs:
+        PathToArchives: '$(System.DefaultWorkingDirectory)'
+        Packages: '*.zip'
+        FilesToTokenize: 'config.prod.json'
+        Prefix: '#{'
+        Suffix: '}#'
+        ReplaceWithEmpty: False
 
     - task: AzureRmWebAppDeployment@4
       inputs:
