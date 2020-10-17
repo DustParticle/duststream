@@ -3,7 +3,15 @@
     width: 100%;
   }
 
-  variables {
+  .variables {
     width: 100%;
+  }
+
+  .editor {
+    height: 500px;
+  }
+
+  .invisible {
+    display: none;
   }
 }

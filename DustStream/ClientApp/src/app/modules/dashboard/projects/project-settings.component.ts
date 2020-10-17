@@ -55,8 +55,7 @@ export class ProjectSettingsComponent {
   updateCiService(): void {
     this.isUpdatingCiService = true;
     let request: IProject = Object.assign({}, this.project);
-    request.azureDevOps = this.ciFormGroup.value.azureDevOps;
-    request.variables = this.ciFormGroup.value.variables;
+    request = Object.assign(request, this.ciFormGroup.value);
     this.projectService.updateCiService(request).subscribe((project: IProject) => {
       this.project = project;
       this.snackBar.open("The CI/CD Service is updated!", null, { duration: 1000 });

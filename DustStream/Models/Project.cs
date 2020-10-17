@@ -12,12 +12,6 @@ namespace DustStream.Models
         public string ArtifactResourcePipeline { get; set; }
     }
 
-    public class Variable
-    {
-        public string Key { get; set; }
-        public string Value { get; set; }
-    }
-
     public class Project
     {
         public Project()
@@ -41,7 +35,7 @@ namespace DustStream.Models
         // Ignore this property in table store
         public string ApiKey { get; set; }
         public AzureDevOpsSettings AzureDevOps { get; set; }
-        public Variable[] Variables { get; set; }
+        public string VariablesDef { get; set; }
         [JsonIgnore]
         public string HashedApiKey { get; set; }
     }

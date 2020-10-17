@@ -1,5 +1,3 @@
-import { IVariable } from "./project.model";
-
 export interface IRevision {
   projectName: string;
   revisionNumber: string;
@@ -11,6 +9,11 @@ export interface IRevision {
   requestor?: string;
 
   [key: string]: any;
+}
+
+export interface IVariable {
+  key: string;
+  value: string;
 }
 
 export interface ITriggerBuildRequest {

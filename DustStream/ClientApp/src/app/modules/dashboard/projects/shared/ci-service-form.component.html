@@ -29,5 +29,15 @@
       <input matInput formControlName="artifactResourcePipeline" placeholder="Pipeline contains published artifacts" required>
     </mat-form-field>
   </ng-container>
-  <variables [variables]="project.variables" [form]="form"></variables>
+  <mat-form-field class="invisible">
+    <input matInput formControlName="variablesDef">
+  </mat-form-field>
+  <div class="variables">
+    <mat-label>Variables Definition</mat-label>
+    <ngs-code-editor [theme]="theme" [codeModel]="variablesCodeModel" [options]="editorOptions"
+                     (valueChanged)="variablesDefChanged($event)"
+                     class="editor">
+    </ngs-code-editor>
+    <mat-hint>Reference to the following<a href="https://formly.dev/ui/material"> examples </a>to define variables.</mat-hint>
+  </div>
 </form>

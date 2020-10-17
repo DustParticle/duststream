@@ -6,18 +6,13 @@ export interface IAzureDevOpsSettings {
   artifactResourcePipeline: string;
 }
 
-export interface IVariable {
-  key: string;
-  value: string;
-}
-
 export interface IProject {
   timestamp: Date;
   name: string;
   description: string;
   apiKey: string;
   azureDevOps?: IAzureDevOpsSettings;
-  variables: IVariable[];
+  variablesDef: string;
 
   routerLink?: string[];      // For frontend only
 }
