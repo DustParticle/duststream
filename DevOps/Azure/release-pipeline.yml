@@ -7,15 +7,14 @@ jobs:
     - visualstudio
     - vstest
   steps:
-  - task: DownloadBuildArtifacts@0
+  - task: DownloadPipelineArtifact@2
     inputs:
       buildType: 'specific'
       project: '$(DUSTPARTICLE_PROJECT)'
-      pipeline: '$(DUSTPARTICLE_PIPELINE)'
+      definition: '$(DUSTPARTICLE_PIPELINE)'
       buildVersionToDownload: 'specific'
-      buildId: '$(DUSTPARTICLE_BUILDID)'
-      downloadType: 'specific'
-      downloadPath: '$(Build.ArtifactStagingDirectory)'
+      pipelineId: '$(DUSTPARTICLE_BUILDID)'
+      targetPath: '$(Build.ArtifactStagingDirectory)'
   - task: ArchiveFiles@2
     inputs:
       rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
@@ -25,7 +24,7 @@ jobs:
       replaceExistingArchive: true
   - task: GitHubRelease@1
     inputs:
-      gitHubConnection: 'GitHub'
+      gitHubConnection: 'duytan8484'
       repositoryName: '$(Build.Repository.Name)'
       action: 'create'
       target: '$(DUSTPARTICLE_SOURCEVERSION)'

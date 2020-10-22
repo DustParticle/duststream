@@ -1,0 +1,133 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "name": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "suffix": {
+      "type": "string",
+      "defaultValue": "[take(uniqueString(resourceGroup().id), 7)]"
+    },
+    "webAppName": {
+      "type": "string",
+      "defaultValue": "[concat(parameters('name'), '-', parameters('suffix'))]"
+    },
+    "appServicePlanName": {
+      "type": "string",
+      "defaultValue": "[concat(parameters('name'), '-', parameters('suffix'))]"
+    },
+    "appServicePlanSku": {
+      "type": "object",
+      "defaultValue": {
+        "tier": "Free",
+        "name": "F1"
+      }
+    },
+    "storageAccountName": {
+      "type": "string",
+      "defaultValue": "[concat(parameters('name'), '-', parameters('suffix'))]"
+    },
+    "resourceTagName": {
+      "type": "string",
+      "defaultValue": "app"
+    },
+    "resourceTagValue": {
+      "type": "string",
+      "defaultValue": "[concat(parameters('name'), '-', parameters('suffix'))]"
+    }
+  },
+  "variables": {
+    "storageAccountName": "[toLower(take(replace(replace(parameters('storageAccountName'), '-', ''), '_', ''), 24))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-02-01",
+      "name": "3822b5f4-d098-4b57-9ee6-3bee686aec4c",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": []
+        }
+      }
+    },
+    {
+      "comments": "app service plan",
+      "type": "Microsoft.Web/serverFarms",
+      "apiVersion": "2018-02-01",
+      "name": "[parameters('appServicePlanName')]",
+      "location": "[parameters('location')]",
+      "sku": "[parameters('appServicePlanSku')]",
+      "properties": {},
+      "tags": {
+        "[parameters('resourceTagName')]": "[parameters('resourceTagValue')]"
+      }
+    },
+    {
+      "apiVersion": "2018-11-01",
+      "name": "[parameters('webAppName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+      ],
+      "properties": {
+          "name": "[parameters('webAppName')]",
+          "siteConfig": {
+              "appSettings": [],
+              "metadata": [
+                  {
+                      "name": "CURRENT_STACK",
+                      "value": "dotnetcore"
+                  }
+              ],
+              "phpVersion": "OFF",
+              "alwaysOn": false
+          },
+          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+          "hostingEnvironment": "",
+          "clientAffinityEnabled": true
+      },
+      "tags": {
+        "[parameters('resourceTagName')]": "[parameters('resourceTagValue')]"
+      }
+    },
+    {
+      "comments": "storage account",
+      "type": "Microsoft.Storage/storageAccounts",
+      "kind": "StorageV2",
+      "apiVersion": "2019-06-01",
+      "name": "[variables('storageAccountName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "accessTier": "Hot",
+        "supportsHttpsTrafficOnly": true,
+        "largeFileSharesState": "Disabled"
+      },
+      "dependsOn": [],
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "tags": {
+        "[parameters('resourceTagName')]": "[parameters('resourceTagValue')]"
+      }
+    }
+  ],
+  "outputs": {
+    "TableStorage": {
+      "type": "object",
+      "value": {
+        "ConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value, ';EndpointSuffix=core.windows.net')]",
+        "DomainString": "DustStream"
+      }
+    }
+  }
+}
