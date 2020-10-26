@@ -4,6 +4,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule, MatCardModule, MatCheckboxModule, MatDialogModule, MatDividerModule, MatExpansionModule, MatFormFieldModule, MatGridListModule, MatIconModule, MatInputModule, MatProgressSpinnerModule, MatSelectModule, MatSnackBarModule, MatStepperModule, MatTableModule, MatTabsModule, MatTooltipModule } from '@angular/material';
 import { RouterModule } from '@angular/router';
+import { CodeEditorModule } from '@ngstack/code-editor';
+import { FormlyModule } from '@ngx-formly/core';
+import { FormlyMaterialModule } from '@ngx-formly/material';
 import { ClipboardModule } from 'ngx-clipboard';
 import { ProcedureExecutionComponent } from './procedure-execution.component';
 import { ProjectCreatorComponent } from './project-creator.component';
@@ -11,18 +14,19 @@ import { ProjectSettingsComponent } from './project-settings.component';
 import { ProjectComponent } from './project.component';
 import { ProjectsComponent } from './projects.component';
 import { RevisionComponent } from './revision.component';
-import { ProcedureService, ProjectService, RevisionService, ReleaseService } from './services';
+import { ProcedureService, ProjectService, ReleaseService, RevisionService } from './services';
 import { CiServiceFormComponent } from './shared/ci-service-form.component';
 import { CreateReleaseComponent } from './shared/create-release.component';
 import { NewBuildComponent } from './shared/new-build.component';
-import { VariablesComponent } from './shared/variables.component';
 import { StatusPipe } from './status.pipe';
-
 
 @NgModule({
   imports: [
     CommonModule,
+    CodeEditorModule.forRoot(),
     ClipboardModule,
+    FormlyModule.forRoot({}),
+    FormlyMaterialModule,
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
@@ -48,7 +52,6 @@ import { StatusPipe } from './status.pipe';
   declarations: [
     StatusPipe,
     CiServiceFormComponent,
-    VariablesComponent,
     CreateReleaseComponent,
     NewBuildComponent,
     ProjectComponent,
@@ -56,7 +59,7 @@ import { StatusPipe } from './status.pipe';
     RevisionComponent,
     ProcedureExecutionComponent,
     ProjectCreatorComponent,
-    ProjectSettingsComponent
+    ProjectSettingsComponent,
   ],
   providers: [
     ProjectService,

@@ -1,5 +1,11 @@
 ﻿namespace DustStream.Models
 {
+    public class Variable
+    {
+        public string Key { get; set; }
+        public string Value { get; set; }
+    }
+
     public class QueueBuildRequest
     {
         public string Branch { get; set; }

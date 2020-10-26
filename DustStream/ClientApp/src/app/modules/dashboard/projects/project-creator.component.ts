@@ -34,7 +34,7 @@ export class ProjectCreatorComponent {
     name: '',
     description: '',
     apiKey: '',
-    variables: []
+    variablesDef: '[]'
   };
 
   constructor(private formBuilder: FormBuilder, private projectService: ProjectService,
