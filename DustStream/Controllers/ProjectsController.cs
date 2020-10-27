@@ -25,7 +25,6 @@ namespace DustStream.Controllers
             this.ProjectDataService = projectDataService;
         }
 
-        [Authorize()]
         [HttpGet]
         public async Task<IEnumerable<Project>> Get()
         {
@@ -39,8 +38,7 @@ namespace DustStream.Controllers
             return await ProjectDataService.GetAsync(TableStorageConfig.DomainString, projectName);
         }
 
-        // TODO: support admin privilege
-        [Authorize]
+        [Authorize(Policy = AuthorizationPolicies.GlobalAdminRequired)]
         [HttpPost]
         public async Task<IActionResult> CreateProject([FromBody] Project request)
         {
@@ -59,7 +57,7 @@ namespace DustStream.Controllers
         }
 
         // TODO: support admin privilege
-        [Authorize]
+        [Authorize(Policy = AuthorizationPolicies.ProjectAdminRequired)]
         [HttpPut("{projectName}/generateApiKey")]
         public async Task<IActionResult> GenerateApiKey([FromRoute] string projectName)
         {
@@ -75,7 +73,7 @@ namespace DustStream.Controllers
             return Ok(project);
         }
 
-        [Authorize]
+        [Authorize(Policy = AuthorizationPolicies.ProjectAdminRequired)]
         [HttpPut("{projectName}/updateCiService")]
         public async Task<IActionResult> UpdateCiService([FromRoute] string projectName, [FromBody] Project request)
         {

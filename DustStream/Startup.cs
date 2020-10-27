@@ -1,7 +1,9 @@
+using DustStream.Extensions;
 using DustStream.Interfaces;
 using DustStream.Options;
 using DustStream.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -37,6 +39,18 @@ namespace DustStream
             {
                 sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddAzureAdBearer(options => Configuration.Bind("AzureAd", options));
+
+            services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
+            {
+                options.TokenValidationParameters.RoleClaimType = "roles";
+            });
+
+            // Adding authorization policies that enforce authorization using Azure AD roles.
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(AuthorizationPolicies.GlobalAdminRequired, policy => policy.RequireRole(AppRole.GlobalAdmin));
+                options.AddPolicy(AuthorizationPolicies.ProjectAdminRequired, policy => policy.RequireRole(AppRole.GlobalAdmin));
+            });
 
             services.AddSingleton<IProjectDataService, ProjectDataService>();
             services.AddSingleton<IRevisionDataService, RevisionDataService>();

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthenticationGuard } from 'microsoft-adal-angular6';
+import { RoleGuard, Roles } from '../../../shared/services';
 import { ProjectCreatorComponent } from './project-creator.component';
 import { ProjectSettingsComponent } from './project-settings.component';
 import { ProjectComponent } from './project.component';
@@ -16,7 +17,7 @@ export const ProjectsRoutes: Routes = [
       {
         path: 'create',
         component: ProjectCreatorComponent,
-        data: { title: 'New Project' }
+        data: { title: 'New Project', expectedRole: Roles.GlobalAdmin }
       },
       {
         path: 'view/:projectName',
@@ -31,7 +32,8 @@ export const ProjectsRoutes: Routes = [
       {
         path: 'settings/:projectName',
         component: ProjectSettingsComponent,
-        data: { title: 'Project Settings' }
+        data: { title: 'Project Settings', expectedRole: Roles.GlobalAdmin },
+        canActivate: [RoleGuard]
       }
     ]
   }
