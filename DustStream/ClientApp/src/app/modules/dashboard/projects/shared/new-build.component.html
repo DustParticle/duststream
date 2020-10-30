@@ -3,6 +3,8 @@
 <mat-dialog-content class="mat-typography">
   <form *ngIf="project && form" [formGroup]="form" class="new-build-form"
         fxLayout="column wrap" fxLayoutAlign="start start" fxLayoutGap="10px">
+    <formly-form class="variables" [form]="form.variables" [model]="variablesModel" [fields]="variablesFields">
+    </formly-form>
     <mat-form-field>
       <mat-label>Branch</mat-label>
       <input matInput formControlName="branch" placeholder="Branch to trigger" required>
@@ -11,10 +13,6 @@
       <mat-label>Commit</mat-label>
       <input matInput formControlName="commit" placeholder="Commit to trigger" required>
     </mat-form-field>
-    <section class="checkbox">
-      <mat-checkbox (change)="showVariables($event)" [checked]="true">Use default variables</mat-checkbox>
-    </section>
-    <variables *ngIf="!useDefaultVariables && variables" [variables]="variables" [form]="form"></variables>
   </form>
 </mat-dialog-content>
 

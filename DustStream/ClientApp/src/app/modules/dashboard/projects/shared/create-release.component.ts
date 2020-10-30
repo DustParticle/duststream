@@ -22,8 +22,8 @@ export class CreateReleaseComponent {
     this.revision = data.revisionData;
     this.release = data.releaseData;
 
-    if (!this.project.variables)
-      this.project.variables = [];
+    if (!this.project.variablesDef)
+      this.project.variablesDef = '[]';
 
     if (this.release) {
       let controls: any = {

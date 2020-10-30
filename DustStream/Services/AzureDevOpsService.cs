@@ -46,6 +46,7 @@ namespace DustStream.Services
                 {
                     Definition = definition,
                     Project = definition.Project,
+                    SourceBranch = queueBuildRequest.Branch,
                     Parameters = JsonConvert.SerializeObject(parameters)
                 };
                 var response = await buildClient.QueueBuildAsync(build);
