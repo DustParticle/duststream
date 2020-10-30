@@ -2,8 +2,10 @@
 using DustStream.Interfaces;
 using DustStream.Models;
 using DustStream.Options;
+using DustStream.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -45,18 +47,21 @@ namespace DustStream.Controllers
         private readonly IRevisionDataService RevisionDataService;
         private readonly IProcedureDataService ProcedureDataService;
         private readonly IProcedureExecutionDataService ProcedureExecutionDataService;
+        private readonly IHubContext<Hubs.BroadcastStatusHub> BroadcastStatusHubContext;
 
         public ProceduresController(IOptions<TableStorageOptions> TableStorageConfig,
             IProjectDataService projectDataService,
             IRevisionDataService revisionDataService,
             IProcedureDataService procedureDataService,
-            IProcedureExecutionDataService procedureExecutionDataService)
+            IProcedureExecutionDataService procedureExecutionDataService,
+            IHubContext<Hubs.BroadcastStatusHub> broadcastStatusHubContext)
         {
             this.TableStorageConfig = TableStorageConfig.Value;
             ProjectDataService = projectDataService;
             RevisionDataService = revisionDataService;
             ProcedureDataService = procedureDataService;
             ProcedureExecutionDataService = procedureExecutionDataService;
+            BroadcastStatusHubContext = broadcastStatusHubContext;
         }
 
         [Authorize]
@@ -145,6 +150,7 @@ namespace DustStream.Controllers
                 Machine = jobStatus.Machine
             };
             await ProcedureExecutionDataService.InsertOrReplaceAsync(projectName, procedureExecution);
+            await BroadcastStatusHubContext.Clients.All.SendAsync("UpdateProcedureExecutionStatus", projectName, procedureExecution);
 
             return Ok();
         }

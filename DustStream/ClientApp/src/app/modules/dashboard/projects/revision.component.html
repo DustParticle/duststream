@@ -53,7 +53,8 @@
     <table *ngIf="'InProgress' === releaseInfo.status || true === isCreatingRelease" class="session-detail">
       <tr>
         <td>
-          <b>Creating Release {{releaseInfo.releaseLabel}} - Please wait ...</b>
+          <i class="fa fa-cog fa-spin" style="font-size:24px"></i>
+          <b> Creating Release {{releaseInfo.releaseLabel}} - Please wait ...</b>
         </td>
       </tr>
     </table>

@@ -2,8 +2,10 @@
 using DustStream.Interfaces;
 using DustStream.Models;
 using DustStream.Options;
+using DustStream.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
@@ -31,9 +33,11 @@ namespace DustStream.Controllers
         private readonly IRevisionDataService RevisionDataService;
         private readonly IProjectDataService ProjectDataService;
         private readonly IAzureDevOpsService AzureDevOpsService;
+        private readonly IHubContext<Hubs.BroadcastStatusHub> BroadcastStatusHubContext;
 
         public ReleasesController(IOptions<TableStorageOptions> TableStorageConfig, IOptions<AzureAdOptions> AzureAdConfig,
-            IReleaseDataService releaseDataService, IRevisionDataService revisionDataService, IProjectDataService projectDataService, IAzureDevOpsService azureDevOpsService)
+            IReleaseDataService releaseDataService, IRevisionDataService revisionDataService, IProjectDataService projectDataService,
+            IAzureDevOpsService azureDevOpsService, IHubContext<Hubs.BroadcastStatusHub> broadcastStatusHubContext)
         {
             this.TableStorageConfig = TableStorageConfig.Value;
             this.AzureAdConfig = AzureAdConfig.Value;
@@ -41,6 +45,7 @@ namespace DustStream.Controllers
             this.RevisionDataService = revisionDataService;
             this.ProjectDataService = projectDataService;
             this.AzureDevOpsService = azureDevOpsService;
+            this.BroadcastStatusHubContext = broadcastStatusHubContext;
         }
 
         [Authorize]
@@ -96,7 +101,9 @@ namespace DustStream.Controllers
                     string accessToken = await ExchangeToAzureDevOpsToken(aadAccessToken); Release returnRelease = await AzureDevOpsService.QueueRelease(project.AzureDevOps, request, accessToken, projectName, revisionNumber, commitNumber);
                     if (returnRelease != null)
                     {
+                        returnRelease.Status = "InProgress";
                         await ReleaseDataService.InsertOrReplaceAsync(returnRelease);
+                        await BroadcastStatusHubContext.Clients.All.SendAsync("UpdateReleaseStatus", returnRelease);
                         return Ok(returnRelease);
                     }
                 }
@@ -124,6 +131,7 @@ namespace DustStream.Controllers
                 release.Status = status;
                 release.ReleaseDataLink = releaseStatus.DataLink;
                 await ReleaseDataService.InsertOrReplaceAsync(release);
+                await BroadcastStatusHubContext.Clients.All.SendAsync("UpdateReleaseStatus", release);
             }
 
             return Ok(release);

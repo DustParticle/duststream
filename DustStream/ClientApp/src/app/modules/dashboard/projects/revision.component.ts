@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IProcedure, IRevision, IRelease } from '../models';
 import { IProject } from '../models/project.model';
 import { ProcedureService, ProjectService, RevisionService, ReleaseService } from './services';
+import { SignalRService } from '../../../services/signal-r.service';
 import { MatDialog, MatTableDataSource } from '@angular/material';
 import { CreateReleaseComponent } from './shared/create-release.component';
 
@@ -26,7 +27,8 @@ export class RevisionComponent {
 
   constructor(private route: ActivatedRoute,
     private revisionService: RevisionService, private procedureService: ProcedureService,
-    private projectService: ProjectService, private releaseService: ReleaseService, private dialog: MatDialog) {
+    private projectService: ProjectService, private releaseService: ReleaseService,
+    private signalRService: SignalRService, private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -74,6 +76,8 @@ export class RevisionComponent {
             this.getRevisionProcedureStatus(this.procedures[j].shortName);
           }
         });
+
+        this.signalRService.updateReleaseStatusTriggered.subscribe((data) => this.updateReleaseStatus(data));
       });
     });
   }
@@ -82,6 +86,14 @@ export class RevisionComponent {
     this.procedureService.getProceduresStatusByRevision(this.projectName, this.revisionNumber, procedure).subscribe((result: string) => {
       this.executionStatus[procedure] = result;
     });
+  }
+
+  updateReleaseStatus(data): void {
+    // Only update value when the current page is identical with received object
+    let release: IRelease = data;
+    if (this.projectName === release.projectName && this.revisionNumber === release.revisionNumber) {
+      this.releaseInfo = release;
+    }
   }
 
   goToCreateRelease(): void {

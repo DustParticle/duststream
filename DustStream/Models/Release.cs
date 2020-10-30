@@ -23,6 +23,8 @@ namespace DustStream.Models
         // Row
         public string RevisionNumber { get; set; }
         public string ReleaseLabel { get; set; }
+
+        // Status: InProgress, Success, Error
         public string Status { get; set; }
 
         // Optional attributes
