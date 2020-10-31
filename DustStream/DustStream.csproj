@@ -15,11 +15,13 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="3.1.9" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="1.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.2.7" />
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.153.0" />
     <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="16.153.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
     <PackageReference Include="TableStorage.Abstractions.POCO" Version="2.6.1" />
   </ItemGroup>
 
@@ -42,6 +44,8 @@
     <None Remove="ClientApp\src\app\shared\interceptors\index.ts" />
     <None Remove="ClientApp\src\app\shared\services\index.ts" />
     <None Remove="ClientApp\src\app\shared\services\request-cache.service.ts" />
+    <None Remove="ClientApp\src\app\shared\services\role-guard.service.ts" />
+    <None Remove="ClientApp\src\app\shared\services\roles.service.ts" />
     <None Remove="ClientApp\src\app\shared\services\sidebar.service.ts" />
     <None Remove="ClientApp\src\assets\config\config.dev.json" />
     <None Remove="ClientApp\src\assets\config\config.prod.json" />
@@ -59,12 +63,18 @@
     <TypeScriptCompile Include="ClientApp\src\app\shared\interceptors\caching-interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\interceptors\insert-auth-token-interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\services\index.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\shared\services\roles.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\shared\services\role-guard.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\services\request-cache.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\services\sidebar.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\assets\config\config.prod.json">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\assets\config\config.dev.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ClientApp\src\app\modules\pages\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

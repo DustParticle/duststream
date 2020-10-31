@@ -8,7 +8,7 @@ import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { CachingInterceptor, InsertAuthTokenInterceptor } from './interceptors';
-import { RequestCacheService, SidebarService } from './services';
+import { RequestCacheService, SidebarService, RolesService, RoleGuard } from './services';
 
 @NgModule({
   declarations: [
@@ -46,7 +46,9 @@ import { RequestCacheService, SidebarService } from './services';
       multi: true
     },
     RequestCacheService,
-    SidebarService
+    SidebarService,
+    RolesService,
+    RoleGuard
   ]
 })
 export class SharedModule { }

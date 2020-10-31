@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog, MatTableDataSource } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Roles, RolesService } from '../../../shared/services';
 import { IProcedure, IRevision } from '../models';
 import { IProject } from '../models/project.model';
 import { ProcedureService, ProjectService, RevisionService } from './services';
@@ -23,7 +24,8 @@ export class ProjectComponent {
 
   constructor(private route: ActivatedRoute, private router: Router,
     private projectService: ProjectService, private revisionService: RevisionService,
-    private procedureService: ProcedureService, private dialog: MatDialog) {
+    private procedureService: ProcedureService, private dialog: MatDialog,
+    public rolesService: RolesService) {
   }
 
   ngOnInit(): void {
@@ -110,5 +112,9 @@ export class ProjectComponent {
       width: '600px',
       data: this.project
     });
+  }
+
+  hasRoleSettings(): boolean {
+    return this.rolesService.hasRole(Roles.GlobalAdmin);
   }
 }

@@ -3,7 +3,7 @@
     <button mat-icon-button type="button" [matTooltip]="'Trigger new build'" [disabled]="!project?.azureDevOps" (click)="goToTriggerNewBuild()">
       <mat-icon>add_circle</mat-icon>
     </button>
-    <button mat-icon-button type="button" [matTooltip]="'Project settings'" (click)="goToSettings()">
+    <button mat-icon-button type="button" [matTooltip]="'Project settings'" [disabled]="!hasRoleSettings()" (click)="goToSettings()">
       <mat-icon>settings</mat-icon>
     </button>
   </div>

@@ -2,7 +2,7 @@
   <a mat-list-item routerLinkActive="list-item-active" routerLink="/projects" [routerLinkActiveOptions]="{exact:true}">
     <mat-icon>folder_open</mat-icon> All Projects
   </a>
-  <a mat-list-item routerLinkActive="list-item-active" routerLink="/projects/create">
+  <a *ngIf="allowCreatingProject()" mat-list-item routerLinkActive="list-item-active" routerLink="/projects/create">
     <mat-icon>add</mat-icon> New Project
   </a>
   <mat-divider></mat-divider>

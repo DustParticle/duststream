@@ -9,7 +9,7 @@ namespace DustStream.Services
 {
     public class ProjectDataService : IProjectDataService
     {
-        private TableStorageOptions TableStorageConfig;
+        private readonly TableStorageOptions TableStorageConfig;
 
         public ProjectDataService(IOptions<TableStorageOptions> tableStorageOptions)
         {
