@@ -39,7 +39,8 @@ namespace DustStream.Controllers
             Success,
             InQueue,
             InProgress,
-            Failed
+            Failed,
+            Canceled
         }
 
         private readonly TableStorageOptions TableStorageConfig;
@@ -149,8 +150,10 @@ namespace DustStream.Controllers
                 ConsoleLog = jobStatus.ConsoleLog,
                 Machine = jobStatus.Machine
             };
-            await ProcedureExecutionDataService.InsertOrReplaceAsync(projectName, procedureExecution);
-            await BroadcastStatusHubContext.Clients.All.SendAsync("UpdateProcedureExecutionStatus", projectName, procedureExecution);
+            await ProcedureExecutionDataService.InsertOrReplaceAsync(projectName, procedureExecution).ContinueWith(async (antecedent) =>
+            {
+                await BroadcastStatusHubContext.Clients.All.SendAsync(EventTable.GetEventMessage(EventTable.EventID.EventProcedureExecutionStatusChanged), projectName, procedureExecution);
+            }, TaskContinuationOptions.OnlyOnRanToCompletion);
 
             return Ok();
         }

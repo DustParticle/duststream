@@ -7,8 +7,24 @@
   color: red;
 }
 
+@keyframes colorInProgress {
+  0% {
+    color: dodgerblue;
+  }
+
+  50% {
+    color: yellow;
+  }
+
+  100% {
+    color: dodgerblue;
+  }
+}
+
 .statusInProgress {
-  color: darkgrey;
+  animation-name: colorInProgress;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
 }
 
 .statusInQueue {
@@ -17,6 +33,10 @@
 
 .statusSuccess {
   color: lawngreen;
+}
+
+.statusCanceled {
+  color: grey;
 }
 
 .button-bar {

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IProcedure, IRevision, IRelease } from '../models';
+import { IProcedureExecution, IProcedure, IRevision, IRelease } from '../models';
 import { IProject } from '../models/project.model';
 import { ProcedureService, ProjectService, RevisionService, ReleaseService } from './services';
 import { SignalRService } from '../../../services/signal-r.service';
@@ -23,8 +23,6 @@ export class RevisionComponent {
   public executionStatus: string[];
   public revisionCommitPayload: object;
 
-  public isCreatingRelease: boolean;
-
   constructor(private route: ActivatedRoute,
     private revisionService: RevisionService, private procedureService: ProcedureService,
     private projectService: ProjectService, private releaseService: ReleaseService,
@@ -39,9 +37,6 @@ export class RevisionComponent {
         projectName: this.projectName,
         revisionNumber: this.revisionNumber
       };
-
-      // Initialize status variables for UI
-      this.isCreatingRelease = false;
 
       this.projectService.getProject(this.projectName).subscribe((project: IProject) => {
         this.project = project;
@@ -77,9 +72,18 @@ export class RevisionComponent {
           }
         });
 
+        this.signalRService.updateProcedureExecutionStatusTriggered.subscribe((data) => this.updateProcedureExecutionStatus(data));
         this.signalRService.updateReleaseStatusTriggered.subscribe((data) => this.updateReleaseStatus(data));
       });
     });
+  }
+
+  updateProcedureExecutionStatus(data): void {
+    // Only update value when the current page is identical with received object
+    let procedureExecution: IProcedureExecution = data.procedureExecution;
+    if (this.projectName === data.projectName && typeof this.executionStatus[procedureExecution.procedureShortName] !== 'undefined') {
+      this.executionStatus[procedureExecution.procedureShortName] = procedureExecution.status;
+    }
   }
 
   getRevisionProcedureStatus(procedure) {
@@ -102,7 +106,6 @@ export class RevisionComponent {
       data: { projectData: this.project, revisionData: this.revisionInfo, releaseData: this.releaseInfo }
     });
     dialogRef.afterClosed().subscribe(() => {
-      // this.isCreatingRelease = true;
     });
   }
 }

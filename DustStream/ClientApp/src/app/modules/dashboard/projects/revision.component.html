@@ -50,7 +50,7 @@
   </button>
 
   <div *ngIf="releaseInfo">
-    <table *ngIf="'InProgress' === releaseInfo.status || true === isCreatingRelease" class="session-detail">
+    <table *ngIf="'InProgress' === releaseInfo.status" class="session-detail">
       <tr>
         <td>
           <i class="fa fa-cog fa-spin" style="font-size:24px"></i>

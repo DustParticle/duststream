@@ -102,8 +102,10 @@ namespace DustStream.Controllers
                     if (returnRelease != null)
                     {
                         returnRelease.Status = "InProgress";
-                        await ReleaseDataService.InsertOrReplaceAsync(returnRelease);
-                        await BroadcastStatusHubContext.Clients.All.SendAsync("UpdateReleaseStatus", returnRelease);
+                        await ReleaseDataService.InsertOrReplaceAsync(returnRelease).ContinueWith(async (antecedent) =>
+                        {
+                            await BroadcastStatusHubContext.Clients.All.SendAsync(EventTable.GetEventMessage(EventTable.EventID.EventReleaseStatusChanged), returnRelease);
+                        }, TaskContinuationOptions.OnlyOnRanToCompletion);
                         return Ok(returnRelease);
                     }
                 }
@@ -130,8 +132,11 @@ namespace DustStream.Controllers
             {
                 release.Status = status;
                 release.ReleaseDataLink = releaseStatus.DataLink;
-                await ReleaseDataService.InsertOrReplaceAsync(release);
-                await BroadcastStatusHubContext.Clients.All.SendAsync("UpdateReleaseStatus", release);
+                await ReleaseDataService.InsertOrReplaceAsync(release).ContinueWith(async (antecedent) =>
+                {
+                    await BroadcastStatusHubContext.Clients.All.SendAsync(EventTable.GetEventMessage(EventTable.EventID.EventReleaseStatusChanged), release);
+                }, TaskContinuationOptions.OnlyOnRanToCompletion);
+                
             }
 
             return Ok(release);

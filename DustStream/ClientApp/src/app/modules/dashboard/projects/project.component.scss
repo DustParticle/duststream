@@ -23,8 +23,22 @@
     background-color: red;
   }
 
+  @keyframes colorInProgress {
+    0% {
+      background-color: dodgerblue;
+    }
+    50% {
+      background-color: yellow;
+    }
+    100% {
+      background-color: dodgerblue;
+    }
+  }
+
   .statusInProgress {
-    background-color: darkgrey;
+    animation-name: colorInProgress;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
   }
 
   .statusInQueue {
@@ -33,6 +47,10 @@
 
   .statusSuccess {
     background-color: lawngreen;
+  }
+
+  .statusCanceled {
+    background-color: grey;
   }
 
   .statusNoStatus {
