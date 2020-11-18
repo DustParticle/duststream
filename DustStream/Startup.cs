@@ -1,3 +1,4 @@
+using DustStream.Hubs;
 using DustStream.Interfaces;
 using DustStream.Options;
 using DustStream.Services;
@@ -25,6 +26,8 @@ namespace DustStream
         {
             services.Configure<AzureAdOptions>(Configuration.GetSection("AzureAd"));
             services.Configure<TableStorageOptions>(Configuration.GetSection("TableStorage"));
+
+            services.AddSignalR();
 
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
@@ -76,6 +79,7 @@ namespace DustStream
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapHub<BroadcastStatusHub>("/broadcastStatusHub");
             });
 
             app.UseSpa(spa =>

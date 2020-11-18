@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { MatDialog, MatTableDataSource } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IProcedure, IRevision } from '../models';
+import { IProcedureExecution, IProcedure, IRevision } from '../models';
 import { IProject } from '../models/project.model';
+import { SignalRService } from '../../../services/signal-r.service';
 import { ProcedureService, ProjectService, RevisionService } from './services';
 import { NewBuildComponent } from './shared/new-build.component';
 
@@ -23,7 +24,8 @@ export class ProjectComponent {
 
   constructor(private route: ActivatedRoute, private router: Router,
     private projectService: ProjectService, private revisionService: RevisionService,
-    private procedureService: ProcedureService, private dialog: MatDialog) {
+    private procedureService: ProcedureService, private signalRService: SignalRService,
+    private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -37,6 +39,7 @@ export class ProjectComponent {
     });
 
     this.revisionService.newBuildTriggered.subscribe(() => this.reloadRevisions());
+    this.signalRService.updateProcedureExecutionStatusTriggered.subscribe((data) => this.updateProcedureExecutionStatus(data));
   }
 
   reloadRevisions(): void {
@@ -85,6 +88,14 @@ export class ProjectComponent {
         this.revisionsDataSource = new MatTableDataSource(this.revisions);
       });
     });
+  }
+
+  updateProcedureExecutionStatus(data): void {
+    // Only update value when the current page is identical with received object
+    let procedureExecution: IProcedureExecution = data.procedureExecution;
+    if (this.projectName === data.projectName && typeof this.executionStatus[procedureExecution.revisionNumber][procedureExecution.procedureShortName] !== 'undefined') {
+      this.executionStatus[procedureExecution.revisionNumber][procedureExecution.procedureShortName] = procedureExecution.status;
+    }
   }
 
   getRevisionProcedureStatus(revision, procedure) {

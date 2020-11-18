@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import { IProcedureExecution } from '../models';
 import { ProcedureService } from './services';
+import { SignalRService } from '../../../services/signal-r.service';
 
 @Component({
   selector: 'procedure-execution',
@@ -18,7 +19,7 @@ export class ProcedureExecutionComponent implements OnInit {
 
   public procedureExecutions: IProcedureExecution[];
 
-  constructor(private procedureService: ProcedureService) {
+  constructor(private procedureService: ProcedureService, private signalRService: SignalRService) {
   }
 
   ngOnInit() {
@@ -27,6 +28,8 @@ export class ProcedureExecutionComponent implements OnInit {
       this.updateCIConfigurationHeader();
       this.peDataSource = new MatTableDataSource<IProcedureExecution>(this.procedureExecutions);
     });
+
+    this.signalRService.updateProcedureExecutionStatusTriggered.subscribe((data) => this.updateProcedureExecutionStatus(data));
   }
 
   updateCIConfigurationHeader() {
@@ -53,5 +56,13 @@ export class ProcedureExecutionComponent implements OnInit {
 
     this.displayedColumns.push('status');
     this.displayedColumns.push('actions');
+  }
+
+  updateProcedureExecutionStatus(data): void {
+    // Only update value when the current page is identical with received object
+    let procedureExecution: IProcedureExecution = data.procedureExecution;
+    if (this.projectName === data.projectName && this.revisionNumber === procedureExecution.revisionNumber) {
+      Object.assign(this.procedureExecutions.find(procedureEntry => procedureEntry.jobId === procedureExecution.jobId) || {}, { status: procedureExecution.status });
+    }
   }
 }

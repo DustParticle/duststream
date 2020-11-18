@@ -4,11 +4,25 @@
 }
 
 .statusFailed {
-  color: red;
+  background-color: rgb(255, 63, 63);
+}
+
+@keyframes colorInProgress {
+  0%   { background-color: rgb(63, 63, 255);    }
+  50%  { background-color: rgb(250, 250, 255);  }
+  100% { background-color: rgb(63, 63, 255);    }
 }
 
 .statusInProgress {
-  color: darkgrey;
+  animation-name: colorInProgress;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+}
+
+.statusInProgress {
+  animation-name: colorInProgress;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
 }
 
 .statusInQueue {
@@ -16,7 +30,11 @@
 }
 
 .statusSuccess {
-  color: lawngreen;
+  background-color: rgb(31, 191, 31);
+}
+
+.statusCanceled {
+  color: grey;
 }
 
 .button-bar {
