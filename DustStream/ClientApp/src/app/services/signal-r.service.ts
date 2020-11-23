@@ -20,8 +20,8 @@ export class SignalRService {
       .catch(err => console.log('Error while starting hub connection: ' + err))
   }
   public addBroadcastStatusListener = () => {
-    this.hubConnection.on(SignalREvent.EventProcedureExecutionStatusChanged, (projectName, procedureExecution) => {
-      this.updateProcedureExecutionStatusTriggered.emit({ projectName, procedureExecution });
+    this.hubConnection.on(SignalREvent.EventProcedureExecutionStatusChanged, (projectName, revision, procedureExecution) => {
+      this.updateProcedureExecutionStatusTriggered.emit({ projectName, revision, procedureExecution });
     });
     this.hubConnection.on(SignalREvent.EventReleaseStatusChanged, (release) => {
       this.updateReleaseStatusTriggered.emit(release);
