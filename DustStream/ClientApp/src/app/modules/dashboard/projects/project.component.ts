@@ -48,11 +48,7 @@ export class ProjectComponent {
       this.revisions = revisions;
 
       // Sort revisions by Created Time, descending
-      this.revisions.sort(function (a, b) {
-        let left = a.createdTime;
-        let right = b.createdTime;
-        return (left > right ? -1 : left < right ? 1 : 0);
-      });
+      this.revisions.sort(this.compareNumbers);
 
       this.procedureService.getProceduresByProject(this.projectName).subscribe((procedures: IProcedure[]) => {
         this.procedures = procedures;
@@ -93,9 +89,40 @@ export class ProjectComponent {
   updateProcedureExecutionStatus(data): void {
     // Only update value when the current page is identical with received object
     let procedureExecution: IProcedureExecution = data.procedureExecution;
-    if (this.projectName === data.projectName && typeof this.executionStatus[procedureExecution.revisionNumber][procedureExecution.procedureShortName] !== 'undefined') {
-      this.executionStatus[procedureExecution.revisionNumber][procedureExecution.procedureShortName] = procedureExecution.status;
+    let revision: IRevision = data.revision;
+    if (this.projectName === data.projectName) {
+      // Found existed "revision" --> validate the corresponding status
+      if (typeof this.revisions.find(revisionEntry => revisionEntry.revisionNumber === revision.revisionNumber) !== 'undefined') {
+        if (typeof this.executionStatus[procedureExecution.revisionNumber][procedureExecution.procedureShortName] !== 'undefined') {
+          this.executionStatus[procedureExecution.revisionNumber][procedureExecution.procedureShortName] = procedureExecution.status;
+        }
+      } else {
+        // Not found revision, it means this is a new added revision and we need to validate the whole entry
+        this.executionStatus[revision.revisionNumber] = [];
+        for (var j: number = 0; j < this.procedures.length; ++j) {
+          var procedure = this.procedures[j].shortName;
+          revision[procedure] = procedure;
+          this.getRevisionProcedureStatus(revision.revisionNumber, procedure);
+        }
+
+        if (!revision.requestor) {
+          revision.requestor = '';
+        }
+        revision['spacing'] = '';
+
+        // Sort revisions by Created Time, descending
+        this.revisions.push(revision);
+        this.revisions.sort(this.compareNumbers);
+
+        this.revisionsDataSource = new MatTableDataSource(this.revisions);
+      }
     }
+  }
+
+  compareNumbers(a, b) {
+    let left = a.createdTime;
+    let right = b.createdTime;
+    return (left > right ? -1 : left < right ? 1 : 0);
   }
 
   getRevisionProcedureStatus(revision, procedure) {

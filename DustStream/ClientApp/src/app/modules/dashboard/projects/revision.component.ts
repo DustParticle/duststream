@@ -81,7 +81,7 @@ export class RevisionComponent {
   updateProcedureExecutionStatus(data): void {
     // Only update value when the current page is identical with received object
     let procedureExecution: IProcedureExecution = data.procedureExecution;
-    if (this.projectName === data.projectName && typeof this.executionStatus[procedureExecution.procedureShortName] !== 'undefined') {
+    if (this.projectName === data.projectName && this.revisionNumber === procedureExecution.revisionNumber && typeof this.executionStatus[procedureExecution.procedureShortName] !== 'undefined') {
       this.executionStatus[procedureExecution.procedureShortName] = procedureExecution.status;
     }
   }

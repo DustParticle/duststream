@@ -111,6 +111,8 @@ namespace DustStream.Controllers
                 return Unauthorized();
             }
 
+            var tasks = new List<Task>();
+
             Revision revision = await RevisionDataService.GetAsync(projectName, revisionNumber);
             if (revision == null)
             {
@@ -123,12 +125,12 @@ namespace DustStream.Controllers
                     CommitPayload = JsonSerializer.Serialize(jobStatus.Commit),
                     CreatedTime = DateTimeOffset.Now
                 };
-                await RevisionDataService.InsertAsync(revision);
+                tasks.Add(RevisionDataService.InsertAsync(revision));
             }
             else
             {
                 revision.CommitPayload = JsonSerializer.Serialize(jobStatus.Commit);
-                await RevisionDataService.UpdateAsync(revision);
+                tasks.Add(RevisionDataService.UpdateAsync(revision));
             }
 
             Procedure procedure = await ProcedureDataService.GetAsync(projectName, procedureName);
@@ -139,7 +141,7 @@ namespace DustStream.Controllers
                     CreatedTime = DateTimeOffset.Now,
                     LongName = procedureName
                 };
-                await ProcedureDataService.InsertAsync(procedure);
+                tasks.Add(ProcedureDataService.InsertAsync(procedure));
             }
 
             // Update status
@@ -150,9 +152,12 @@ namespace DustStream.Controllers
                 ConsoleLog = jobStatus.ConsoleLog,
                 Machine = jobStatus.Machine
             };
-            await ProcedureExecutionDataService.InsertOrReplaceAsync(projectName, procedureExecution).ContinueWith(async (antecedent) =>
+            tasks.Add(ProcedureExecutionDataService.InsertOrReplaceAsync(projectName, procedureExecution));
+
+            // Make sure all changes from database are done before trigger event to clients
+            await Task.WhenAll(tasks).ContinueWith(async (antecedent) =>
             {
-                await BroadcastStatusHubContext.Clients.All.SendAsync(EventTable.GetEventMessage(EventTable.EventID.EventProcedureExecutionStatusChanged), projectName, procedureExecution);
+                await BroadcastStatusHubContext.Clients.All.SendAsync(EventTable.GetEventMessage(EventTable.EventID.EventProcedureExecutionStatusChanged), projectName, revision, procedureExecution);
             }, TaskContinuationOptions.OnlyOnRanToCompletion);
 
             return Ok();

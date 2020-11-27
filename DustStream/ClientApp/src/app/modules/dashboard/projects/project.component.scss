@@ -18,57 +18,6 @@
   .th-spacing {
     width: 100%
   }
-
-  .statusFailed {
-    background-color: rgb(255, 63, 63);
-  }
-
-  @keyframes colorInProgress {
-    0%   { background-color: rgb(63, 63, 255);    }
-    50%  { background-color: rgb(250, 250, 255);  }
-    100% { background-color: rgb(63, 63, 255);    }
-  }
-
-  .statusInProgress {
-    animation-name: colorInProgress;
-    animation-duration: 2s;
-    animation-iteration-count: infinite;
-  }
-
-  .statusInProgress {
-    animation-name: colorInProgress;
-    animation-duration: 4s;
-    animation-iteration-count: infinite;
-  }
-
-  .statusInQueue {
-    background-color: white;
-  }
-
-  .statusSuccess {
-    background-color: rgb(31, 191, 31);
-  }
-
-  .statusCanceled {
-    background-color: grey;
-  }
-
-  .statusNoStatus {
-    background-color: transparent;
-  }
-
-  .status-cell {
-    height: 1px;
-
-    div {
-      padding: 0 5px 0 5px;
-      height: 100%;
-
-      p {
-        text-align: center;
-      }
-    }
-  }
 }
 
 .button-bar {
