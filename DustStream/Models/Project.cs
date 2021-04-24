@@ -1,5 +1,6 @@
-﻿using System;
-using System.Text.Json.Serialization;
+﻿using Microsoft.Azure.Cosmos.Table;
+using Newtonsoft.Json;
+using System;
 
 namespace DustStream.Models
 {
@@ -26,17 +27,40 @@ namespace DustStream.Models
         }
 
         // Partition
-        [JsonIgnore]
+        [JsonProperty("PartitionKey")]
         public string DomainString { get; set; }
         // Row
+        [JsonProperty("id")]
         public string Name { get; set; }
         public string Description { get; set; }
+        [JsonProperty("SourceTimestamp")]
         public DateTimeOffset Timestamp { get; set; }
-        // Ignore this property in table store
-        public string ApiKey { get; set; }
-        public AzureDevOpsSettings AzureDevOps { get; set; }
-        public string VariablesDef { get; set; }
+
         [JsonIgnore]
+        public string ApiKey { get; set; }
+        [JsonProperty("AzureDevOpsJson")]
+        private string AzureDevOpsString { get; set; }
+        public AzureDevOpsSettings AzureDevOps
+        {
+            get
+            {
+                if (this.AzureDevOpsString != null)
+                {
+                    return JsonConvert.DeserializeObject<AzureDevOpsSettings>(this.AzureDevOpsString);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            set
+            {
+                this.AzureDevOpsString = JsonConvert.SerializeObject(value);
+            }
+        }
+        [JsonProperty("VariablesJson")]
+        public string VariablesDef { get; set; }
         public string HashedApiKey { get; set; }
     }
 }

@@ -19,16 +19,16 @@ namespace DustStream.Controllers
     [Route("api/[controller]")]
     public class RevisionsController : Controller
     {
-        private readonly TableStorageOptions TableStorageConfig;
+        private readonly CosmosDbOptions CosmosDbConfig;
         private readonly AzureAdOptions AzureAdConfig;
-        private readonly IRevisionDataService RevisionDataService;
-        private readonly IProjectDataService ProjectDataService;
+        private readonly ICdbRevisionDataService RevisionDataService;
+        private readonly ICdbProjectDataService ProjectDataService;
         private readonly IAzureDevOpsService AzureDevOpsService;
 
-        public RevisionsController(IOptions<TableStorageOptions> TableStorageConfig, IOptions<AzureAdOptions> AzureAdConfig,
-            IRevisionDataService revisionDataService, IProjectDataService projectDataService, IAzureDevOpsService azureDevOpsService)
+        public RevisionsController(IOptions<CosmosDbOptions> CosmosDbConfig, IOptions<AzureAdOptions> AzureAdConfig,
+            ICdbRevisionDataService revisionDataService, ICdbProjectDataService projectDataService, IAzureDevOpsService azureDevOpsService)
         {
-            this.TableStorageConfig = TableStorageConfig.Value;
+            this.CosmosDbConfig = CosmosDbConfig.Value;
             this.AzureAdConfig = AzureAdConfig.Value;
             this.RevisionDataService = revisionDataService;
             this.ProjectDataService = projectDataService;
@@ -53,7 +53,7 @@ namespace DustStream.Controllers
         [HttpPost("projects/{projectName}/trigger/azure")]
         public async Task<IActionResult> TriggerAzure([FromRoute] string projectName, [FromBody] QueueBuildRequest request)
         {
-            Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, projectName);
+            Project project = await ProjectDataService.GetAsync(CosmosDbConfig.DomainString, projectName);
             if (null == project)
             {
                 return new NotFoundObjectResult("Project not found");

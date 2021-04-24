@@ -16,12 +16,12 @@ namespace DustStream.Controllers
     [Route("api/[controller]")]
     public class ProjectsController : Controller
     {
-        private readonly TableStorageOptions TableStorageConfig;
-        private readonly IProjectDataService ProjectDataService;
+        private readonly CosmosDbOptions CosmosDbConfig;
+        private readonly ICdbProjectDataService ProjectDataService;
 
-        public ProjectsController(IOptions<TableStorageOptions> TableStorageConfig, IProjectDataService projectDataService)
+        public ProjectsController(IOptions<CosmosDbOptions> CosmosDbConfig, ICdbProjectDataService projectDataService)
         {
-            this.TableStorageConfig = TableStorageConfig.Value;
+            this.CosmosDbConfig = CosmosDbConfig.Value;
             this.ProjectDataService = projectDataService;
         }
 
@@ -29,14 +29,14 @@ namespace DustStream.Controllers
         [HttpGet]
         public async Task<IEnumerable<Project>> Get()
         {
-            return await ProjectDataService.GetAllByDomainAsync(TableStorageConfig.DomainString);
+            return await ProjectDataService.GetAllByDomainAsync(CosmosDbConfig.DomainString);
         }
 
         [Authorize]
         [HttpGet("{projectName}")]
         public async Task<Project> GetProject([FromRoute] string projectName)
         {
-            return await ProjectDataService.GetAsync(TableStorageConfig.DomainString, projectName);
+            return await ProjectDataService.GetAsync(CosmosDbConfig.DomainString, projectName);
         }
 
         // TODO: support admin privilege
@@ -44,13 +44,13 @@ namespace DustStream.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProject([FromBody] Project request)
         {
-            Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, request.Name);
+            Project project = await ProjectDataService.GetAsync(CosmosDbConfig.DomainString, request.Name);
             if (null != project)
             {
                 return Conflict(new { message = $"The project '{request.Name}' is already existed." });
             }
 
-            request.DomainString = TableStorageConfig.DomainString;
+            request.DomainString = CosmosDbConfig.DomainString;
             request.Timestamp = DateTime.Now;
             UpdateApiKey(in request);
             await ProjectDataService.InsertAsync(request);
@@ -63,7 +63,7 @@ namespace DustStream.Controllers
         [HttpPut("{projectName}/generateApiKey")]
         public async Task<IActionResult> GenerateApiKey([FromRoute] string projectName)
         {
-            Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, projectName);
+            Project project = await ProjectDataService.GetAsync(CosmosDbConfig.DomainString, projectName);
             if (null == project)
             {
                 return NotFound();
@@ -79,7 +79,7 @@ namespace DustStream.Controllers
         [HttpPut("{projectName}/updateCiService")]
         public async Task<IActionResult> UpdateCiService([FromRoute] string projectName, [FromBody] Project request)
         {
-            Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, projectName);
+            Project project = await ProjectDataService.GetAsync(CosmosDbConfig.DomainString, projectName);
             if (null == project)
             {
                 return NotFound();

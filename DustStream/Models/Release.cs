@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace DustStream.Models
 {
@@ -19,8 +20,10 @@ namespace DustStream.Models
 
         // Required attributes
         // Partition
+        [JsonProperty("PartitionKey")]
         public string ProjectName { get; set; }
         // Row
+        [JsonProperty("id")]
         public string RevisionNumber { get; set; }
         public string ReleaseLabel { get; set; }
 
