@@ -15,9 +15,17 @@ import { NewBuildComponent } from './shared/new-build.component';
 export class ProjectComponent {
   displayedColumns: string[];
   revisionsDataSource: MatTableDataSource<IRevision>;
+
+  // Initialize values for pagination
+  // TODO: pageSize should be config from server site
+  page = 1;
+  pageSize = 10;
+  totalItems = 0;
+
   public revisions: IRevision[];
   public procedures: IProcedure[];
   public project: IProject;
+  public continuationTokenTable: string[];
 
   public executionStatus: string[][];
   public projectName: string;
@@ -34,7 +42,13 @@ export class ProjectComponent {
       // Get title and component info
       this.projectService.getProject(this.projectName).subscribe((project: IProject) => {
         this.project = project;
+
+        this.page = 1;
+        this.continuationTokenTable = [];
+        this.continuationTokenTable.push("null");
+
         this.reloadRevisions();
+        this.reloadPages();
       });
     });
 
@@ -43,17 +57,24 @@ export class ProjectComponent {
   }
 
   reloadRevisions(): void {
-    // Get table content
-    this.revisionService.getRevisionsByProject(this.projectName).subscribe((revisions: IRevision[]) => {
-      this.revisions = revisions;
+    this.revisionService.getTokensByProject(this.projectName, this.pageSize).subscribe((tokenSet) => {
+      tokenSet.forEach(tokenData => {
+        this.continuationTokenTable.push(tokenData);
+      });
 
-      // Sort revisions by Created Time, descending
-      this.revisions.sort(this.compareNumbers);
+      this.totalItems = (this.continuationTokenTable.length * this.pageSize);
+    });
+  }
+
+  reloadPages(): void {
+    this.revisionService.getRevisionsByProject(this.projectName, this.pageSize, this.continuationTokenTable[this.page - 1]).subscribe((revisionDataSet) => {
+      this.revisions = revisionDataSet;
 
       this.procedureService.getProceduresByProject(this.projectName).subscribe((procedures: IProcedure[]) => {
         this.procedures = procedures;
 
         // Sort procedures by Created Time, ascending
+        // TODO: need to remove
         this.procedures.sort(function (a, b) {
           let left = a.createdTime;
           let right = b.createdTime;
@@ -110,19 +131,10 @@ export class ProjectComponent {
         }
         revision['spacing'] = '';
 
-        // Sort revisions by Created Time, descending
         this.revisions.push(revision);
-        this.revisions.sort(this.compareNumbers);
-
         this.revisionsDataSource = new MatTableDataSource(this.revisions);
       }
     }
-  }
-
-  compareNumbers(a, b) {
-    let left = a.createdTime;
-    let right = b.createdTime;
-    return (left > right ? -1 : left < right ? 1 : 0);
   }
 
   getRevisionProcedureStatus(revision, procedure) {

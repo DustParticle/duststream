@@ -5,13 +5,15 @@ using System.Threading.Tasks;
 using DustStream.Models;
 using Microsoft.Azure.Cosmos;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.TeamFoundation;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace DustStream.Services
 {
     public class CosmosDbHelper
     {
         private static readonly string DatabaseId = "duststream";
-
         private readonly Container CosmosDbContainer;
 
         public CosmosDbHelper(string connectionString, string containerString)
@@ -52,13 +54,64 @@ namespace DustStream.Services
             FeedIterator<T> queryResultSetIterator = this.CosmosDbContainer.GetItemQueryIterator<T>(queryDefinition);
 
             List<T> items = new List<T>();
-
             while (queryResultSetIterator.HasMoreResults)
             {
                 FeedResponse<T> currentResultSet = await queryResultSetIterator.ReadNextAsync();
                 foreach (T item in currentResultSet)
                 {
                     items.Add(item);
+                }
+            }
+
+            return items;
+        }
+
+        public async Task<IEnumerable<T>> QueryItemsAsync<T>(string queryString, int itemsPerPage, string continuationToken)
+        {
+            QueryDefinition queryDefinition = new QueryDefinition(queryString);
+            if ("null" == continuationToken)
+            {
+                continuationToken = null;
+            }
+
+            FeedIterator<T> queryResultSetIterator = this.CosmosDbContainer.GetItemQueryIterator<T>(queryDefinition, continuationToken,
+            new QueryRequestOptions()
+            {
+                MaxItemCount = itemsPerPage
+            });
+
+            List<T> items = new List<T>();
+            if (queryResultSetIterator.HasMoreResults)
+            {
+                FeedResponse<T> currentResultSet = await queryResultSetIterator.ReadNextAsync();
+
+                foreach (T item in currentResultSet)
+                {
+                    items.Add(item);
+                }
+            }
+
+            return items;
+        }
+
+        public async Task<IEnumerable<string>> QueryTokensAsync<T>(string queryString, int itemsPerPage)
+        {
+            QueryDefinition queryDefinition = new QueryDefinition(queryString);
+
+            FeedIterator<T> queryResultSetIterator = this.CosmosDbContainer.GetItemQueryIterator<T>(queryDefinition, null,
+            new QueryRequestOptions()
+            {
+                MaxItemCount = itemsPerPage
+            });
+
+            List<string> items = new List<string>();
+            while (queryResultSetIterator.HasMoreResults)
+            {
+                FeedResponse<T> currentResultSet = await queryResultSetIterator.ReadNextAsync();
+
+                if (null != currentResultSet.ContinuationToken)
+                {
+                    items.Add(currentResultSet.ContinuationToken);
                 }
             }
 

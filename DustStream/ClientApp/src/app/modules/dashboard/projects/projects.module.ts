@@ -19,9 +19,11 @@ import { CiServiceFormComponent } from './shared/ci-service-form.component';
 import { CreateReleaseComponent } from './shared/create-release.component';
 import { NewBuildComponent } from './shared/new-build.component';
 import { StatusPipe } from './status.pipe';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   imports: [
+    NgbModule,
     CommonModule,
     CodeEditorModule.forRoot(),
     ClipboardModule,

@@ -57,3 +57,7 @@
     </div>
   </mat-tab>
 </mat-tab-group>
+
+<div style="margin:20px;">
+  <ngb-pagination [collectionSize]="totalItems" [pageSize]="pageSize" [(page)]="page" [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true" (pageChange)="reloadPages()"></ngb-pagination>
+</div>

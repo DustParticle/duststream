@@ -36,10 +36,17 @@ namespace DustStream.Controllers
         }
 
         [Authorize]
-        [HttpGet("projects/{projectName}")]
-        public async Task<IEnumerable<Revision>> GetRevisions([FromRoute] string projectName)
+        [HttpGet("projects/{projectName}/getdata/{itemsPerPage}/token")]
+        public async Task<IEnumerable<Revision>> GetRevisions([FromRoute] string projectName, [FromRoute] int itemsPerPage, string continuationToken)
         {
-            return await RevisionDataService.GetAllByProjectAsync(projectName);
+            return await RevisionDataService.GetAllByProjectAsync(projectName, itemsPerPage, continuationToken);
+        }
+
+        [Authorize]
+        [HttpGet("projects/{projectName}/gettokens/{itemsPerPage}")]
+        public async Task<IEnumerable<string>> GetTokens([FromRoute] string projectName, [FromRoute] int itemsPerPage)
+        {
+            return await RevisionDataService.GetTokensByProjectAsync(projectName, itemsPerPage);
         }
 
         [Authorize]

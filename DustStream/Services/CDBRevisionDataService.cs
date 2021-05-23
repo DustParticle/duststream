@@ -2,6 +2,7 @@ using DustStream.Interfaces;
 using DustStream.Models;
 using DustStream.Options;
 using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -19,10 +20,16 @@ namespace DustStream.Services
             this.CosmosDbContainer = new CosmosDbHelper(this.CosmosDbConfig.ConnectionString, ContainerName);
         }
 
-        public Task<IEnumerable<Revision>> GetAllByProjectAsync(string projectName)
+        public Task<IEnumerable<Revision>> GetAllByProjectAsync(string projectName, int itemsPerPage, string continuationToken)
         {
-            string queryString = $"SELECT * FROM c WHERE c.PartitionKey = '{projectName}'";
-            return CosmosDbContainer.QueryItemsAsync<Revision>(queryString);
+            string queryString = $"SELECT * FROM c WHERE c.PartitionKey = '{projectName}' ORDER BY c.CreatedTime DESC";
+            return CosmosDbContainer.QueryItemsAsync<Revision>(queryString, itemsPerPage, continuationToken);
+        }
+
+        public Task<IEnumerable<string>> GetTokensByProjectAsync(string projectName, int itemsPerPage)
+        {
+            string queryString = $"SELECT * FROM c WHERE c.PartitionKey = '{projectName}' ORDER BY c.CreatedTime DESC";
+            return CosmosDbContainer.QueryTokensAsync<Revision>(queryString, itemsPerPage);
         }
 
         public Task<Revision> GetAsync(string projectName, string revisionNumber)

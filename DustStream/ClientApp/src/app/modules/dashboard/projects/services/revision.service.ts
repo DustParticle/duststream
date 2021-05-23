@@ -11,8 +11,13 @@ export class RevisionService {
   constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
   }
 
-  public getRevisionsByProject(projectName: string): Observable<IRevision[]> {
-    return <Observable<IRevision[]>>this.http.get(`/api/revisions/projects/${projectName}`);
+  public getTokensByProject(projectName: string, itemsPerPage: number): Observable<string[]> {
+    return <Observable<string[]>>this.http.get(`/api/revisions/projects/${projectName}/gettokens/${itemsPerPage}`);
+  }
+
+  public getRevisionsByProject(projectName: string, itemsPerPage: number, continuationToken: string): Observable<IRevision[]> {
+    continuationToken = encodeURIComponent(continuationToken);
+    return <Observable<IRevision[]>>this.http.get(`/api/revisions/projects/${projectName}/getdata/${itemsPerPage}/token?continuationToken=${continuationToken}`);
   }
 
   public getRevisionByProject(projectName: string, revisionNumber: string): Observable<IRevision> {
