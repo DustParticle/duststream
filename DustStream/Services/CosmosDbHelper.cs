@@ -34,11 +34,9 @@ namespace DustStream.Services
             {
                 // Read the item to see if it exists.  
                 ItemResponse<T> existedItem = await this.CosmosDbContainer.ReadItemAsync<T>(keyString, new PartitionKey(partitionString));
-                Console.WriteLine("Item in database with id: {0} already exists\n", keyString);
 
                 // Replace the item
                 existedItem = await this.CosmosDbContainer.ReplaceItemAsync<T>(item, keyString, new PartitionKey(partitionString));
-                Console.WriteLine("Updated item [{0},{1}].\n \tBody is now: {2}\n", partitionString, keyString, existedItem.Resource);
             }
             catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
             {
@@ -94,9 +92,10 @@ namespace DustStream.Services
             return items;
         }
 
-        public async Task<IEnumerable<string>> QueryTokensAsync<T>(string queryString, int itemsPerPage)
+        public async Task<Tuple<List<string>, int>> QueryTokensAsync<T>(string queryString, int itemsPerPage)
         {
             QueryDefinition queryDefinition = new QueryDefinition(queryString);
+            int totalItems = 0;
 
             FeedIterator<T> queryResultSetIterator = this.CosmosDbContainer.GetItemQueryIterator<T>(queryDefinition, null,
             new QueryRequestOptions()
@@ -109,13 +108,15 @@ namespace DustStream.Services
             {
                 FeedResponse<T> currentResultSet = await queryResultSetIterator.ReadNextAsync();
 
+                totalItems += currentResultSet.Count;
+
                 if (null != currentResultSet.ContinuationToken)
                 {
                     items.Add(currentResultSet.ContinuationToken);
                 }
             }
 
-            return items;
+            return Tuple.Create(items, totalItems);
         }
 
         public async Task<T> ReadItemAsync<T>(string partitionString, string keyString)

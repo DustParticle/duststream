@@ -29,14 +29,14 @@ namespace DustStream.Controllers
     {
         private readonly CosmosDbOptions CosmosDbConfig;
         private readonly AzureAdOptions AzureAdConfig;
-        private readonly ICdbReleaseDataService ReleaseDataService;
-        private readonly ICdbRevisionDataService RevisionDataService;
-        private readonly ICdbProjectDataService ProjectDataService;
+        private readonly IReleaseDataService ReleaseDataService;
+        private readonly IRevisionDataService RevisionDataService;
+        private readonly IProjectDataService ProjectDataService;
         private readonly IAzureDevOpsService AzureDevOpsService;
         private readonly IHubContext<Hubs.BroadcastStatusHub> BroadcastStatusHubContext;
 
         public ReleasesController(IOptions<CosmosDbOptions> CosmosDbConfig, IOptions<AzureAdOptions> AzureAdConfig,
-            ICdbReleaseDataService releaseDataService, ICdbRevisionDataService revisionDataService, ICdbProjectDataService projectDataService,
+            IReleaseDataService releaseDataService, IRevisionDataService revisionDataService, IProjectDataService projectDataService,
             IAzureDevOpsService azureDevOpsService, IHubContext<Hubs.BroadcastStatusHub> broadcastStatusHubContext)
         {
             this.CosmosDbConfig = CosmosDbConfig.Value;

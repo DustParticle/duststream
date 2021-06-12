@@ -39,7 +39,7 @@ namespace DustStream.Extensions
                 return;
             }
 
-            var projectDataService = context.HttpContext.RequestServices.GetService<ICdbProjectDataService>();
+            var projectDataService = context.HttpContext.RequestServices.GetService<IProjectDataService>();
             var cosmosDbConfig = context.HttpContext.RequestServices.GetService<IOptions<CosmosDbOptions>>();
             var project = await projectDataService.GetAsync(cosmosDbConfig.Value.DomainString, projectName);
             MD5 md5 = MD5.Create();

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatDialog, MatTableDataSource } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IProcedureExecution, IProcedure, IRevision } from '../models';
@@ -6,6 +6,8 @@ import { IProject } from '../models/project.model';
 import { SignalRService } from '../../../services/signal-r.service';
 import { ProcedureService, ProjectService, RevisionService } from './services';
 import { NewBuildComponent } from './shared/new-build.component';
+import { MatPaginator } from '@angular/material';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'project',
@@ -16,11 +18,13 @@ export class ProjectComponent {
   displayedColumns: string[];
   revisionsDataSource: MatTableDataSource<IRevision>;
 
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+
   // Initialize values for pagination
-  // TODO: pageSize should be config from server site
-  page = 1;
-  pageSize = 10;
+  page = 0;
+  pageSize = 25;
   totalItems = 0;
+  pageSizeOptions: number[] = [10, 25, 50, 100];
 
   public revisions: IRevision[];
   public procedures: IProcedure[];
@@ -42,13 +46,7 @@ export class ProjectComponent {
       // Get title and component info
       this.projectService.getProject(this.projectName).subscribe((project: IProject) => {
         this.project = project;
-
-        this.page = 1;
-        this.continuationTokenTable = [];
-        this.continuationTokenTable.push("null");
-
         this.reloadRevisions();
-        this.reloadPages();
       });
     });
 
@@ -57,29 +55,36 @@ export class ProjectComponent {
   }
 
   reloadRevisions(): void {
+    this.continuationTokenTable = [];
+    this.continuationTokenTable.push("null");
+
     this.revisionService.getTokensByProject(this.projectName, this.pageSize).subscribe((tokenSet) => {
-      tokenSet.forEach(tokenData => {
+      tokenSet.item1.forEach(tokenData => {
         this.continuationTokenTable.push(tokenData);
       });
 
-      this.totalItems = (this.continuationTokenTable.length * this.pageSize);
+      this.totalItems = tokenSet.item2;
+      this.page = 0;
+      this.reloadPages();
     });
   }
 
+  onChangePage(pe: PageEvent) {
+    if (pe.pageSize != this.pageSize) {
+      this.pageSize = pe.pageSize;
+      this.reloadRevisions();
+    } else {
+      this.page = pe.pageIndex;
+      this.reloadPages();
+    }
+  }
+
   reloadPages(): void {
-    this.revisionService.getRevisionsByProject(this.projectName, this.pageSize, this.continuationTokenTable[this.page - 1]).subscribe((revisionDataSet) => {
+    this.revisionService.getRevisionsByProject(this.projectName, this.pageSize, this.continuationTokenTable[this.page]).subscribe((revisionDataSet) => {
       this.revisions = revisionDataSet;
 
       this.procedureService.getProceduresByProject(this.projectName).subscribe((procedures: IProcedure[]) => {
         this.procedures = procedures;
-
-        // Sort procedures by Created Time, ascending
-        // TODO: need to remove
-        this.procedures.sort(function (a, b) {
-          let left = a.createdTime;
-          let right = b.createdTime;
-          return (left > right ? 1 : left < right ? -1 : 0);
-        });
 
         this.displayedColumns = ['createdTime', 'revisionNumber', 'requestor'];
         for (var i: number = 0; i < this.procedures.length; ++i) {

@@ -21,12 +21,12 @@ namespace DustStream.Controllers
     {
         private readonly CosmosDbOptions CosmosDbConfig;
         private readonly AzureAdOptions AzureAdConfig;
-        private readonly ICdbRevisionDataService RevisionDataService;
-        private readonly ICdbProjectDataService ProjectDataService;
+        private readonly IRevisionDataService RevisionDataService;
+        private readonly IProjectDataService ProjectDataService;
         private readonly IAzureDevOpsService AzureDevOpsService;
 
         public RevisionsController(IOptions<CosmosDbOptions> CosmosDbConfig, IOptions<AzureAdOptions> AzureAdConfig,
-            ICdbRevisionDataService revisionDataService, ICdbProjectDataService projectDataService, IAzureDevOpsService azureDevOpsService)
+            IRevisionDataService revisionDataService, IProjectDataService projectDataService, IAzureDevOpsService azureDevOpsService)
         {
             this.CosmosDbConfig = CosmosDbConfig.Value;
             this.AzureAdConfig = AzureAdConfig.Value;
@@ -44,7 +44,7 @@ namespace DustStream.Controllers
 
         [Authorize]
         [HttpGet("projects/{projectName}/gettokens/{itemsPerPage}")]
-        public async Task<IEnumerable<string>> GetTokens([FromRoute] string projectName, [FromRoute] int itemsPerPage)
+        public async Task<Tuple<List<string>, int>> GetTokens([FromRoute] string projectName, [FromRoute] int itemsPerPage)
         {
             return await RevisionDataService.GetTokensByProjectAsync(projectName, itemsPerPage);
         }

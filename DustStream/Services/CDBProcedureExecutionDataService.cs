@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DustStream.Services
 {
-    public class CdbProcedureExecutionDataService : ICdbProcedureExecutionDataService
+    public class CdbProcedureExecutionDataService : IProcedureExecutionDataService
     {
         private readonly CosmosDbOptions CosmosDbConfig;
         private static readonly string ProcedureExecutionTableSuffix = "ProcedureExecutions";

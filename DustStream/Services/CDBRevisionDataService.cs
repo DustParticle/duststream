@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DustStream.Services
 {
-    public class CdbRevisionDataService : ICdbRevisionDataService
+    public class CdbRevisionDataService : IRevisionDataService
     {
         private readonly CosmosDbOptions CosmosDbConfig;
         private readonly CosmosDbHelper CosmosDbContainer;
@@ -26,7 +26,7 @@ namespace DustStream.Services
             return CosmosDbContainer.QueryItemsAsync<Revision>(queryString, itemsPerPage, continuationToken);
         }
 
-        public Task<IEnumerable<string>> GetTokensByProjectAsync(string projectName, int itemsPerPage)
+        public Task<Tuple<List<string>, int>> GetTokensByProjectAsync(string projectName, int itemsPerPage)
         {
             string queryString = $"SELECT * FROM c WHERE c.PartitionKey = '{projectName}' ORDER BY c.CreatedTime DESC";
             return CosmosDbContainer.QueryTokensAsync<Revision>(queryString, itemsPerPage);

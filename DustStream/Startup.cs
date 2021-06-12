@@ -41,11 +41,11 @@ namespace DustStream
                 sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddAzureAdBearer(options => Configuration.Bind("AzureAd", options));
 
-            services.AddSingleton<ICdbProjectDataService, CdbProjectDataService>();
-            services.AddSingleton<ICdbRevisionDataService, CdbRevisionDataService>();
-            services.AddSingleton<ICdbReleaseDataService, CdbReleaseDataService>();
-            services.AddSingleton<ICdbProcedureDataService, CdbProcedureDataService>();
-            services.AddSingleton<ICdbProcedureExecutionDataService, CdbProcedureExecutionDataService>();
+            services.AddSingleton<IProjectDataService, CdbProjectDataService>();
+            services.AddSingleton<IRevisionDataService, CdbRevisionDataService>();
+            services.AddSingleton<IReleaseDataService, CdbReleaseDataService>();
+            services.AddSingleton<IProcedureDataService, CdbProcedureDataService>();
+            services.AddSingleton<IProcedureExecutionDataService, CdbProcedureExecutionDataService>();
             services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
         }
 

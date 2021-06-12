@@ -37,11 +37,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Interfaces\IProcedureDataService.cs" />
-    <Compile Remove="Interfaces\IProcedureExecutionDataService.cs" />
-    <Compile Remove="Interfaces\IProjectDataService.cs" />
-    <Compile Remove="Interfaces\IReleaseDataService.cs" />
-    <Compile Remove="Interfaces\IRevisionDataService.cs" />
     <Compile Remove="Services\ProcedureDataService.cs" />
     <Compile Remove="Services\ProcedureExecutionDataService.cs" />
     <Compile Remove="Services\ProjectDataService.cs" />

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DustStream.Services
 {
-    public class CdbReleaseDataService : ICdbReleaseDataService
+    public class CdbReleaseDataService : IReleaseDataService
     {
         private readonly CosmosDbOptions CosmosDbConfig;
         private readonly CosmosDbHelper CosmosDbContainer;

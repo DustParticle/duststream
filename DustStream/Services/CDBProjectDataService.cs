@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DustStream.Services
 {
-    public class CdbProjectDataService : ICdbProjectDataService
+    public class CdbProjectDataService : IProjectDataService
     {
         private readonly CosmosDbOptions CosmosDbConfig;
         private readonly CosmosDbHelper CosmosDbContainer;

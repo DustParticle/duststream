@@ -17,9 +17,9 @@ namespace DustStream.Controllers
     public class ProjectsController : Controller
     {
         private readonly CosmosDbOptions CosmosDbConfig;
-        private readonly ICdbProjectDataService ProjectDataService;
+        private readonly IProjectDataService ProjectDataService;
 
-        public ProjectsController(IOptions<CosmosDbOptions> CosmosDbConfig, ICdbProjectDataService projectDataService)
+        public ProjectsController(IOptions<CosmosDbOptions> CosmosDbConfig, IProjectDataService projectDataService)
         {
             this.CosmosDbConfig = CosmosDbConfig.Value;
             this.ProjectDataService = projectDataService;

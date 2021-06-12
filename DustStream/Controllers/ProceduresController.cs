@@ -44,17 +44,17 @@ namespace DustStream.Controllers
         }
 
         private readonly CosmosDbOptions CosmosDbConfig;
-        private readonly ICdbProjectDataService ProjectDataService;
-        private readonly ICdbRevisionDataService RevisionDataService;
-        private readonly ICdbProcedureDataService ProcedureDataService;
-        private readonly ICdbProcedureExecutionDataService ProcedureExecutionDataService;
+        private readonly IProjectDataService ProjectDataService;
+        private readonly IRevisionDataService RevisionDataService;
+        private readonly IProcedureDataService ProcedureDataService;
+        private readonly IProcedureExecutionDataService ProcedureExecutionDataService;
         private readonly IHubContext<Hubs.BroadcastStatusHub> BroadcastStatusHubContext;
 
         public ProceduresController(IOptions<CosmosDbOptions> CosmosDbConfig,
-            ICdbProjectDataService projectDataService,
-            ICdbRevisionDataService revisionDataService,
-            ICdbProcedureDataService procedureDataService,
-            ICdbProcedureExecutionDataService procedureExecutionDataService,
+            IProjectDataService projectDataService,
+            IRevisionDataService revisionDataService,
+            IProcedureDataService procedureDataService,
+            IProcedureExecutionDataService procedureExecutionDataService,
             IHubContext<Hubs.BroadcastStatusHub> broadcastStatusHubContext)
         {
             this.CosmosDbConfig = CosmosDbConfig.Value;

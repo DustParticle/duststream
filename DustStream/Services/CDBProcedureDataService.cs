@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DustStream.Services
 {
-    public class CdbProcedureDataService : ICdbProcedureDataService
+    public class CdbProcedureDataService : IProcedureDataService
     {
         private readonly CosmosDbOptions CosmosDbConfig;
         private readonly CosmosDbHelper CosmosDbContainer;
@@ -21,7 +21,7 @@ namespace DustStream.Services
 
         public Task<IEnumerable<Procedure>> GetAllByProjectAsync(string projectName)
         {
-            string queryString = $"SELECT * FROM c WHERE c.PartitionKey = '{projectName}'";
+            string queryString = $"SELECT * FROM c WHERE c.PartitionKey = '{projectName}' ORDER BY c.CreatedTime ASC";
             return CosmosDbContainer.QueryItemsAsync<Procedure>(queryString);
         }
 
