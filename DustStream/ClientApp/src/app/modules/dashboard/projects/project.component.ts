@@ -34,6 +34,9 @@ export class ProjectComponent {
   public executionStatus: string[][];
   public projectName: string;
 
+  // This variable is to compare and detect new revision submitted
+  public latestRevision: IRevision;
+
   constructor(private route: ActivatedRoute, private router: Router,
     private projectService: ProjectService, private revisionService: RevisionService,
     private procedureService: ProcedureService, private signalRService: SignalRService,
@@ -47,6 +50,9 @@ export class ProjectComponent {
       this.projectService.getProject(this.projectName).subscribe((project: IProject) => {
         this.project = project;
         this.reloadRevisions();
+
+        this.page = 0;
+        this.reloadPages();
       });
     });
 
@@ -64,8 +70,6 @@ export class ProjectComponent {
       });
 
       this.totalItems = tokenSet.item2;
-      this.page = 0;
-      this.reloadPages();
     });
   }
 
@@ -73,6 +77,9 @@ export class ProjectComponent {
     if (pe.pageSize != this.pageSize) {
       this.pageSize = pe.pageSize;
       this.reloadRevisions();
+
+      this.page = 0;
+      this.reloadPages();
     } else {
       this.page = pe.pageIndex;
       this.reloadPages();
@@ -82,6 +89,11 @@ export class ProjectComponent {
   reloadPages(): void {
     this.revisionService.getRevisionsByProject(this.projectName, this.pageSize, this.continuationTokenTable[this.page]).subscribe((revisionDataSet) => {
       this.revisions = revisionDataSet;
+
+      // Update latest revision in case page is 0
+      if (0 == this.page) {
+        this.latestRevision = this.revisions[0];
+      }
 
       this.procedureService.getProceduresByProject(this.projectName).subscribe((procedures: IProcedure[]) => {
         this.procedures = procedures;
@@ -123,21 +135,17 @@ export class ProjectComponent {
           this.executionStatus[procedureExecution.revisionNumber][procedureExecution.procedureShortName] = procedureExecution.status;
         }
       } else {
-        // Not found revision, it means this is a new added revision and we need to validate the whole entry
-        this.executionStatus[revision.revisionNumber] = [];
-        for (var j: number = 0; j < this.procedures.length; ++j) {
-          var procedure = this.procedures[j].shortName;
-          revision[procedure] = procedure;
-          this.getRevisionProcedureStatus(revision.revisionNumber, procedure);
+        // Not found revision, it means this is a new added revision, or on another page
+        // Detect if created time of the item is latest --> new item validation
+        if (revision.createdTime > this.latestRevision.createdTime) {
+          this.reloadRevisions();
+
+          this.latestRevision = revision;
         }
 
-        if (!revision.requestor) {
-          revision.requestor = '';
+        if (0 == this.page) {
+          this.reloadPages();
         }
-        revision['spacing'] = '';
-
-        this.revisions.push(revision);
-        this.revisionsDataSource = new MatTableDataSource(this.revisions);
       }
     }
   }
