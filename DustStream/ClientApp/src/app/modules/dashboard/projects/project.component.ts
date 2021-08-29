@@ -131,8 +131,8 @@ export class ProjectComponent {
     if (this.projectName === data.projectName) {
       // Found existed "revision" --> validate the corresponding status
       if (typeof this.revisions.find(revisionEntry => revisionEntry.revisionNumber === revision.revisionNumber) !== 'undefined') {
-        if (typeof this.executionStatus[procedureExecution.revisionNumber][procedureExecution.procedureShortName] !== 'undefined') {
-          this.executionStatus[procedureExecution.revisionNumber][procedureExecution.procedureShortName] = procedureExecution.status;
+        if (typeof this.executionStatus[revision.revisionNumber][procedureExecution.procedureShortName] !== 'undefined') {
+          this.executionStatus[revision.revisionNumber][procedureExecution.procedureShortName] = procedureExecution.status;
         }
       } else {
         // Not found revision, it means this is a new added revision, or on another page

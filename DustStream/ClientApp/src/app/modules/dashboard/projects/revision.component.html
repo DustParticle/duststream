@@ -1,5 +1,5 @@
 <div *ngIf="revisionInfo">
-  <h3>{{ revisionInfo.projectName }} - {{ revisionInfo.revisionNumber }} - {{ revisionInfo.timestamp | date:"MM/dd/yyyy HH:mm:ss" }}</h3>
+  <h3>{{ projectName }} - {{ revisionInfo.revisionNumber }} - {{ revisionInfo.timestamp | date:"MM/dd/yyyy HH:mm:ss" }}</h3>
 
   <div *ngIf="revisionCommitPayload">
     <h4>Repository and commit</h4>

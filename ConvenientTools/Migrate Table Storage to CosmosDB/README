@@ -2,7 +2,7 @@ This README is to guide migrating database from TableStorage to CosmosDB. This c
 
 1. Ensure that you created a cosmos database named "duststream"
 2. Extract dt1.8.3.7z using "Extract here"
-3. Modify below agruments in the script migrate_online_auto.ps1
+3. Modify below agruments in the script migrate_single_container.ps1
     $sourceConnectionString is the connection string of current TableStorage
     $targetConnectionString is the primary connection string of destination cosmosdb
     $tableName is the name of tables in current TableStorage. Repeat naming this variable until all tables are declared

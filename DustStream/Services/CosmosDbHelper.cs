@@ -13,13 +13,12 @@ namespace DustStream.Services
 {
     public class CosmosDbHelper
     {
-        private static readonly string DatabaseId = "duststream";
         private readonly Container CosmosDbContainer;
 
-        public CosmosDbHelper(string connectionString, string containerString)
+        public CosmosDbHelper(string connectionString, string databaseString, string containerString)
         {
             CosmosClient cosmosClient = new CosmosClient(connectionString, new CosmosClientOptions() { ApplicationName = "DustStream" });
-            Database database = cosmosClient.GetDatabase(DatabaseId);
+            Database database = cosmosClient.GetDatabase(databaseString);
             CosmosDbContainer = database.GetContainer(containerString);
         }
 
@@ -42,7 +41,6 @@ namespace DustStream.Services
             {
                 // Create an item in the container
                 ItemResponse<T> itemResponse = await this.CosmosDbContainer.CreateItemAsync<T>(item, new PartitionKey(partitionString));
-                Console.WriteLine("Created item in database with id: {0} Operation consumed {1} RUs.\n", keyString, itemResponse.RequestCharge);
             }
         }
 

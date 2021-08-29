@@ -81,7 +81,8 @@ export class RevisionComponent {
   updateProcedureExecutionStatus(data): void {
     // Only update value when the current page is identical with received object
     let procedureExecution: IProcedureExecution = data.procedureExecution;
-    if (this.projectName === data.projectName && this.revisionNumber === procedureExecution.revisionNumber && typeof this.executionStatus[procedureExecution.procedureShortName] !== 'undefined') {
+    let revision: IRevision = data.revision;
+    if (this.projectName === data.projectName && this.revisionNumber === revision.revisionNumber && typeof this.executionStatus[procedureExecution.procedureShortName] !== 'undefined') {
       this.executionStatus[procedureExecution.procedureShortName] = procedureExecution.status;
     }
   }
@@ -95,7 +96,7 @@ export class RevisionComponent {
   updateReleaseStatus(data): void {
     // Only update value when the current page is identical with received object
     let release: IRelease = data;
-    if (this.projectName === release.projectName && this.revisionNumber === release.revisionNumber) {
+    if (this.releaseInfo.projectName === release.projectName && this.revisionNumber === release.revisionNumber) {
       this.releaseInfo = release;
     }
   }
