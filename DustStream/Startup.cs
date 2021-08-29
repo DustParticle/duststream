@@ -25,7 +25,7 @@ namespace DustStream
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<AzureAdOptions>(Configuration.GetSection("AzureAd"));
-            services.Configure<TableStorageOptions>(Configuration.GetSection("TableStorage"));
+            services.Configure<CosmosDbOptions>(Configuration.GetSection("CosmosDb"));
 
             services.AddSignalR();
 
@@ -41,11 +41,11 @@ namespace DustStream
                 sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddAzureAdBearer(options => Configuration.Bind("AzureAd", options));
 
-            services.AddSingleton<IProjectDataService, ProjectDataService>();
-            services.AddSingleton<IRevisionDataService, RevisionDataService>();
-            services.AddSingleton<IReleaseDataService, ReleaseDataService>();
-            services.AddSingleton<IProcedureDataService, ProcedureDataService>();
-            services.AddSingleton<IProcedureExecutionDataService, ProcedureExecutionDataService>();
+            services.AddSingleton<IProjectDataService, CdbProjectDataService>();
+            services.AddSingleton<IRevisionDataService, CdbRevisionDataService>();
+            services.AddSingleton<IReleaseDataService, CdbReleaseDataService>();
+            services.AddSingleton<IProcedureDataService, CdbProcedureDataService>();
+            services.AddSingleton<IProcedureExecutionDataService, CdbProcedureExecutionDataService>();
             services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
         }
 

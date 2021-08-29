@@ -57,3 +57,14 @@
     </div>
   </mat-tab>
 </mat-tab-group>
+
+<div style="margin:20px;">
+  <mat-paginator [length]="totalItems"
+                 [pageIndex]="page"
+                 [pageSize]="pageSize"
+                 [pageSizeOptions]="pageSizeOptions"
+                 [showFirstLastButtons]="true"
+                 (page)="onChangePage($event)">
+  </mat-paginator>
+</div>
+

@@ -27,7 +27,7 @@ namespace DustStream.Controllers
     [Route("api/[controller]")]
     public class ReleasesController : Controller
     {
-        private readonly TableStorageOptions TableStorageConfig;
+        private readonly CosmosDbOptions CosmosDbConfig;
         private readonly AzureAdOptions AzureAdConfig;
         private readonly IReleaseDataService ReleaseDataService;
         private readonly IRevisionDataService RevisionDataService;
@@ -35,11 +35,11 @@ namespace DustStream.Controllers
         private readonly IAzureDevOpsService AzureDevOpsService;
         private readonly IHubContext<Hubs.BroadcastStatusHub> BroadcastStatusHubContext;
 
-        public ReleasesController(IOptions<TableStorageOptions> TableStorageConfig, IOptions<AzureAdOptions> AzureAdConfig,
+        public ReleasesController(IOptions<CosmosDbOptions> CosmosDbConfig, IOptions<AzureAdOptions> AzureAdConfig,
             IReleaseDataService releaseDataService, IRevisionDataService revisionDataService, IProjectDataService projectDataService,
             IAzureDevOpsService azureDevOpsService, IHubContext<Hubs.BroadcastStatusHub> broadcastStatusHubContext)
         {
-            this.TableStorageConfig = TableStorageConfig.Value;
+            this.CosmosDbConfig = CosmosDbConfig.Value;
             this.AzureAdConfig = AzureAdConfig.Value;
             this.ReleaseDataService = releaseDataService;
             this.RevisionDataService = revisionDataService;
@@ -80,7 +80,7 @@ namespace DustStream.Controllers
         [HttpPost("projects/{projectName}/revisions/{revisionNumber}/createRelease")]
         public async Task<IActionResult> CreateRelease([FromRoute] string revisionNumber, [FromRoute] string projectName, [FromBody] QueueReleaseRequest request)
         {
-            Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, projectName);
+            Project project = await ProjectDataService.GetAsync(CosmosDbConfig.DomainString, projectName);
             if (null == project)
             {
                 return new NotFoundObjectResult("Project not found");
@@ -118,7 +118,7 @@ namespace DustStream.Controllers
         public async Task<IActionResult> UpdateReleaseStatus([FromRoute] string revisionNumber, [FromRoute] string projectName,
             [FromRoute] string status, [FromBody] ReleaseStatusRequest releaseStatus)
         {
-            Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, projectName);
+            Project project = await ProjectDataService.GetAsync(CosmosDbConfig.DomainString, projectName);
             if (project == null)
             {
                 return new NotFoundObjectResult("Project not found");

@@ -43,21 +43,21 @@ namespace DustStream.Controllers
             Canceled
         }
 
-        private readonly TableStorageOptions TableStorageConfig;
+        private readonly CosmosDbOptions CosmosDbConfig;
         private readonly IProjectDataService ProjectDataService;
         private readonly IRevisionDataService RevisionDataService;
         private readonly IProcedureDataService ProcedureDataService;
         private readonly IProcedureExecutionDataService ProcedureExecutionDataService;
         private readonly IHubContext<Hubs.BroadcastStatusHub> BroadcastStatusHubContext;
 
-        public ProceduresController(IOptions<TableStorageOptions> TableStorageConfig,
+        public ProceduresController(IOptions<CosmosDbOptions> CosmosDbConfig,
             IProjectDataService projectDataService,
             IRevisionDataService revisionDataService,
             IProcedureDataService procedureDataService,
             IProcedureExecutionDataService procedureExecutionDataService,
             IHubContext<Hubs.BroadcastStatusHub> broadcastStatusHubContext)
         {
-            this.TableStorageConfig = TableStorageConfig.Value;
+            this.CosmosDbConfig = CosmosDbConfig.Value;
             ProjectDataService = projectDataService;
             RevisionDataService = revisionDataService;
             ProcedureDataService = procedureDataService;
@@ -105,7 +105,7 @@ namespace DustStream.Controllers
         public async Task<IActionResult> UpdateProcedureExecutionStatus([FromRoute] string procedureName, [FromRoute] string projectName,
             [FromRoute] string revisionNumber, [FromRoute] string status, [FromBody] JobStatusRequest jobStatus)
         {
-            Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, projectName);
+            Project project = await ProjectDataService.GetAsync(CosmosDbConfig.DomainString, projectName);
             if (project == null)
             {
                 return Unauthorized();

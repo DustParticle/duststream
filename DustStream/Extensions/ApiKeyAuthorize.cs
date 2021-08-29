@@ -40,8 +40,8 @@ namespace DustStream.Extensions
             }
 
             var projectDataService = context.HttpContext.RequestServices.GetService<IProjectDataService>();
-            var tableStorageConfig = context.HttpContext.RequestServices.GetService<IOptions<TableStorageOptions>>();
-            var project = await projectDataService.GetAsync(tableStorageConfig.Value.DomainString, projectName);
+            var cosmosDbConfig = context.HttpContext.RequestServices.GetService<IOptions<CosmosDbOptions>>();
+            var project = await projectDataService.GetAsync(cosmosDbConfig.Value.DomainString, projectName);
             MD5 md5 = MD5.Create();
             var hashedApiKeyInRequest = Encoding.UTF8.GetString(md5.ComputeHash(Encoding.UTF8.GetBytes(apiKeyInRequest)));
             if (project == null || !hashedApiKeyInRequest.Equals(project.HashedApiKey))

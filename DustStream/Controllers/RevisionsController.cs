@@ -19,16 +19,16 @@ namespace DustStream.Controllers
     [Route("api/[controller]")]
     public class RevisionsController : Controller
     {
-        private readonly TableStorageOptions TableStorageConfig;
+        private readonly CosmosDbOptions CosmosDbConfig;
         private readonly AzureAdOptions AzureAdConfig;
         private readonly IRevisionDataService RevisionDataService;
         private readonly IProjectDataService ProjectDataService;
         private readonly IAzureDevOpsService AzureDevOpsService;
 
-        public RevisionsController(IOptions<TableStorageOptions> TableStorageConfig, IOptions<AzureAdOptions> AzureAdConfig,
+        public RevisionsController(IOptions<CosmosDbOptions> CosmosDbConfig, IOptions<AzureAdOptions> AzureAdConfig,
             IRevisionDataService revisionDataService, IProjectDataService projectDataService, IAzureDevOpsService azureDevOpsService)
         {
-            this.TableStorageConfig = TableStorageConfig.Value;
+            this.CosmosDbConfig = CosmosDbConfig.Value;
             this.AzureAdConfig = AzureAdConfig.Value;
             this.RevisionDataService = revisionDataService;
             this.ProjectDataService = projectDataService;
@@ -36,10 +36,17 @@ namespace DustStream.Controllers
         }
 
         [Authorize]
-        [HttpGet("projects/{projectName}")]
-        public async Task<IEnumerable<Revision>> GetRevisions([FromRoute] string projectName)
+        [HttpGet("projects/{projectName}/getdata/{itemsPerPage}/token")]
+        public async Task<IEnumerable<Revision>> GetRevisions([FromRoute] string projectName, [FromRoute] int itemsPerPage, string continuationToken)
         {
-            return await RevisionDataService.GetAllByProjectAsync(projectName);
+            return await RevisionDataService.GetAllByProjectAsync(projectName, itemsPerPage, continuationToken);
+        }
+
+        [Authorize]
+        [HttpGet("projects/{projectName}/gettokens/{itemsPerPage}")]
+        public async Task<Tuple<List<string>, int>> GetTokens([FromRoute] string projectName, [FromRoute] int itemsPerPage)
+        {
+            return await RevisionDataService.GetTokensByProjectAsync(projectName, itemsPerPage);
         }
 
         [Authorize]
@@ -53,7 +60,7 @@ namespace DustStream.Controllers
         [HttpPost("projects/{projectName}/trigger/azure")]
         public async Task<IActionResult> TriggerAzure([FromRoute] string projectName, [FromBody] QueueBuildRequest request)
         {
-            Project project = await ProjectDataService.GetAsync(TableStorageConfig.DomainString, projectName);
+            Project project = await ProjectDataService.GetAsync(CosmosDbConfig.DomainString, projectName);
             if (null == project)
             {
                 return new NotFoundObjectResult("Project not found");

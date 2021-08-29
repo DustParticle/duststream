@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatDialog, MatTableDataSource } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IProcedureExecution, IProcedure, IRevision } from '../models';
@@ -6,6 +6,8 @@ import { IProject } from '../models/project.model';
 import { SignalRService } from '../../../services/signal-r.service';
 import { ProcedureService, ProjectService, RevisionService } from './services';
 import { NewBuildComponent } from './shared/new-build.component';
+import { MatPaginator } from '@angular/material';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'project',
@@ -15,12 +17,25 @@ import { NewBuildComponent } from './shared/new-build.component';
 export class ProjectComponent {
   displayedColumns: string[];
   revisionsDataSource: MatTableDataSource<IRevision>;
+
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+
+  // Initialize values for pagination
+  page = 0;
+  pageSize = 25;
+  totalItems = 0;
+  pageSizeOptions: number[] = [10, 25, 50, 100];
+
   public revisions: IRevision[];
   public procedures: IProcedure[];
   public project: IProject;
+  public continuationTokenTable: string[];
 
   public executionStatus: string[][];
   public projectName: string;
+
+  // This variable is to compare and detect new revision submitted
+  public latestRevision: IRevision;
 
   constructor(private route: ActivatedRoute, private router: Router,
     private projectService: ProjectService, private revisionService: RevisionService,
@@ -35,6 +50,9 @@ export class ProjectComponent {
       this.projectService.getProject(this.projectName).subscribe((project: IProject) => {
         this.project = project;
         this.reloadRevisions();
+
+        this.page = 0;
+        this.reloadPages();
       });
     });
 
@@ -43,22 +61,42 @@ export class ProjectComponent {
   }
 
   reloadRevisions(): void {
-    // Get table content
-    this.revisionService.getRevisionsByProject(this.projectName).subscribe((revisions: IRevision[]) => {
-      this.revisions = revisions;
+    this.continuationTokenTable = [];
+    this.continuationTokenTable.push("null");
 
-      // Sort revisions by Created Time, descending
-      this.revisions.sort(this.compareNumbers);
+    this.revisionService.getTokensByProject(this.projectName, this.pageSize).subscribe((tokenSet) => {
+      tokenSet.item1.forEach(tokenData => {
+        this.continuationTokenTable.push(tokenData);
+      });
+
+      this.totalItems = tokenSet.item2;
+    });
+  }
+
+  onChangePage(pe: PageEvent) {
+    if (pe.pageSize != this.pageSize) {
+      this.pageSize = pe.pageSize;
+      this.reloadRevisions();
+
+      this.page = 0;
+      this.reloadPages();
+    } else {
+      this.page = pe.pageIndex;
+      this.reloadPages();
+    }
+  }
+
+  reloadPages(): void {
+    this.revisionService.getRevisionsByProject(this.projectName, this.pageSize, this.continuationTokenTable[this.page]).subscribe((revisionDataSet) => {
+      this.revisions = revisionDataSet;
+
+      // Update latest revision in case page is 0
+      if (0 == this.page) {
+        this.latestRevision = this.revisions[0];
+      }
 
       this.procedureService.getProceduresByProject(this.projectName).subscribe((procedures: IProcedure[]) => {
         this.procedures = procedures;
-
-        // Sort procedures by Created Time, ascending
-        this.procedures.sort(function (a, b) {
-          let left = a.createdTime;
-          let right = b.createdTime;
-          return (left > right ? 1 : left < right ? -1 : 0);
-        });
 
         this.displayedColumns = ['createdTime', 'revisionNumber', 'requestor'];
         for (var i: number = 0; i < this.procedures.length; ++i) {
@@ -93,36 +131,23 @@ export class ProjectComponent {
     if (this.projectName === data.projectName) {
       // Found existed "revision" --> validate the corresponding status
       if (typeof this.revisions.find(revisionEntry => revisionEntry.revisionNumber === revision.revisionNumber) !== 'undefined') {
-        if (typeof this.executionStatus[procedureExecution.revisionNumber][procedureExecution.procedureShortName] !== 'undefined') {
-          this.executionStatus[procedureExecution.revisionNumber][procedureExecution.procedureShortName] = procedureExecution.status;
+        if (typeof this.executionStatus[revision.revisionNumber][procedureExecution.procedureShortName] !== 'undefined') {
+          this.executionStatus[revision.revisionNumber][procedureExecution.procedureShortName] = procedureExecution.status;
         }
       } else {
-        // Not found revision, it means this is a new added revision and we need to validate the whole entry
-        this.executionStatus[revision.revisionNumber] = [];
-        for (var j: number = 0; j < this.procedures.length; ++j) {
-          var procedure = this.procedures[j].shortName;
-          revision[procedure] = procedure;
-          this.getRevisionProcedureStatus(revision.revisionNumber, procedure);
+        // Not found revision, it means this is a new added revision, or on another page
+        // Detect if created time of the item is latest --> new item validation
+        if (revision.createdTime > this.latestRevision.createdTime) {
+          this.reloadRevisions();
+
+          this.latestRevision = revision;
         }
 
-        if (!revision.requestor) {
-          revision.requestor = '';
+        if (0 == this.page) {
+          this.reloadPages();
         }
-        revision['spacing'] = '';
-
-        // Sort revisions by Created Time, descending
-        this.revisions.push(revision);
-        this.revisions.sort(this.compareNumbers);
-
-        this.revisionsDataSource = new MatTableDataSource(this.revisions);
       }
     }
-  }
-
-  compareNumbers(a, b) {
-    let left = a.createdTime;
-    let right = b.createdTime;
-    return (left > right ? -1 : left < right ? 1 : 0);
   }
 
   getRevisionProcedureStatus(revision, procedure) {
